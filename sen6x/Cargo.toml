@@ -1,0 +1,43 @@
+[package]
+name = "sen6x"
+version = "0.0.1"
+edition = "2024"
+authors = ["Nikolai Filchenko <finomen812@gmail.com>"]
+license = "MIT"
+description = "embedded-hal driver for the sensirion sen6x sensors"
+documentation = "https://docs.rs/sen6x-rs"
+repository = "https://github.com/finomen/sen6x-rs"
+keywords = ["airquality", "sen6x", "sensirion", "sensor"]
+categories = ["embedded", "no-std"]
+
+[features]
+default = []
+embedded-hal = ["dep:embedded-hal"]
+embedded-hal-async = ["dep:embedded-hal", "dep:embedded-hal-async", "sensirion-i2c/embedded-hal-async"]
+embassy = ["dep:embassy-sync", "dep:embassy-time", "embedded-hal-async"]
+serde = [ "dep:serde", "fixed_str/serde"]
+sen62 = []
+sen63c = []
+sen65 = []
+sen66 = []
+sen68 = []
+sen69c = []
+std = ["fixed_str/std"]
+thiserror = [ "dep:thiserror" ]
+
+[dependencies]
+embedded-hal = { version = "=1.0.0", optional = true }
+embedded-hal-async = { version = "1.0.0", optional = true }
+sensirion-i2c = "0.4.0"
+embassy-sync = {  version = "0.8.0", optional = true }
+embassy-time = { version = "0.5.1", optional = true}
+thiserror = { version = "2.0.18" ,  optional = true}
+sen6x-macros = { version = "0.0.1", path = "../sen6x-macros" }
+serde = {version = "1.0.228", optional = true}
+fixed_str = { version = "0.9.1", default-features = false }
+bitrs = "0.10.0"
+
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]

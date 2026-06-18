@@ -1,0 +1,4 @@
+[workspace]
+members = ["sen6x", "sen6x-macros"]
+default-members = ["sen6x"]
+
