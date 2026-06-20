@@ -1,5 +1,6 @@
 //! This library provides an embedded `no_std` driver for the [Sensirion SEN6x series](https://sensirion.com/media/documents/FAFC548D/693FBB15/PS_DS_SEN6x.pdf).
 //! This driver is compatible with `embedded-hal` v1.0.
+#![cfg_attr(docsrs, feature(doc_auto_cfg))]
 #![cfg_attr(not(test), no_std)]
 
 pub mod commands;
@@ -21,7 +22,7 @@ use crate::connection::State;
 use crate::io::ToBytes;
 use crate::types::Milliseconds;
 #[cfg(feature = "embassy")]
-use embassy_sync::mutex::{Mutex};
+use embassy_sync::mutex::Mutex;
 
 
 /// # Thread safety
