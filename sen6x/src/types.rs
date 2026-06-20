@@ -16,7 +16,6 @@ impl From<MicrogramsPerCubicMeter> for f32 {
     }
 }
 
-
 impl ValueWrapper for MicrogramsPerCubicMeter {
     type Inner = u16;
     fn wrap(value: u16) -> Self {
@@ -206,7 +205,6 @@ impl ValueWrapper for Hpa {
 pub struct Meters {
     value: u16,
 }
-
 
 impl From<Meters> for f32 {
     fn from(value: Meters) -> f32 {

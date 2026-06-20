@@ -24,7 +24,6 @@ use crate::types::Milliseconds;
 #[cfg(feature = "embassy")]
 use embassy_sync::mutex::Mutex;
 
-
 /// # Thread safety
 /// `Sen6x` uses [`core::cell::RefCell`] for interior mutability, so it is
 /// [`Send`] but not [`Sync`]. The driver is intended to be owned by a single
@@ -99,7 +98,10 @@ mod sealed {
     #[cfg(any(feature = "embedded-hal", feature = "embedded-hal-async"))]
     impl<I2C> Sealed for &mut I2C {}
     #[cfg(feature = "embassy")]
-    impl<M, I2C> Sealed for &embassy_sync::mutex::Mutex<M, I2C> where M: embassy_sync::blocking_mutex::raw::RawMutex {}
+    impl<M, I2C> Sealed for &embassy_sync::mutex::Mutex<M, I2C> where
+        M: embassy_sync::blocking_mutex::raw::RawMutex
+    {
+    }
 }
 
 /// Conversion of an I²C bus handle into the connection type stored by [`Sen6x`].

@@ -21,12 +21,12 @@ macro_rules! sensor_model {
     };
 }
 
-sensor_model!(Sen62, 0x62);
-sensor_model!(Sen63c, 0x63);
-sensor_model!(Sen65, 0x65);
-sensor_model!(Sen66, 0x66);
-sensor_model!(Sen68, 0x68);
-sensor_model!(Sen69c, 0x69);
+sensor_model!(Sen62, 0x6B);
+sensor_model!(Sen63c, 0x6B);
+sensor_model!(Sen65, 0x6B);
+sensor_model!(Sen66, 0x6B);
+sensor_model!(Sen68, 0x6B);
+sensor_model!(Sen69c, 0x6B);
 
 #[cfg(feature = "embedded-hal")]
 pub(crate) trait Sen6xConnection<S, E>
