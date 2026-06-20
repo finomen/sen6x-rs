@@ -225,13 +225,13 @@ pub(crate) enum CommandId {
     /// Execute the forced recalibration (FRC) of the CO2 signal. To successfully conduct an accurate FRC,
     /// the following steps need to be taken:
     /// 1. Start a measurement with the command Start Continuous Measurement and operate the sensor for
-    /// at least 3 minutes in an environment with homogenous and constant CO2 concentration. If applicable,
-    /// the reference value for altitude or pressure compensation must be provided to the sensor beforehand
-    /// with the command Set Sensor Altitude or Set Ambient Pressure respectively.
+    ///    at least 3 minutes in an environment with homogenous and constant CO2 concentration. If applicable,
+    ///    the reference value for altitude or pressure compensation must be provided to the sensor beforehand
+    ///    with the command Set Sensor Altitude or Set Ambient Pressure respectively.
     /// 2. Stop the measurement with the command Stop Measurement and wait at least 1400ms.
     /// 3. Issue the Perform Forced CO2 Recalibration command with the reference CO2 concentration that the
-    /// sensor should be set to. The recalibration procedure will take about 500 ms to complete, during which
-    /// time no other functions can be executed. A return value of 0xFFFF indicates that the FRC has failed
+    ///    sensor should be set to. The recalibration procedure will take about 500 ms to complete, during which
+    ///    time no other functions can be executed. A return value of 0xFFFF indicates that the FRC has failed
     #[execution_time(500)]
     #[fetch(allowed_in = [Idle], rx = Co2Correction, tx = PpmU16 )]
     #[target(Sen63c)]

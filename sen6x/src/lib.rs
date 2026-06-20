@@ -174,19 +174,43 @@ impl<'a, C, D> Sen6x<'a, C, D> {
     /// # Example
     ///
     #[cfg_attr(feature = "embedded-hal", doc = "```")]
-    #[cfg_attr(feature = "embedded-hal", doc = "use embedded_hal_mock::eh1::i2c::{Mock as I2cMock, Transaction};")]
-    #[cfg_attr(feature = "embedded-hal", doc = "use embedded_hal_mock::eh1::delay::NoopDelay;")]
+    #[cfg_attr(
+        feature = "embedded-hal",
+        doc = "use embedded_hal_mock::eh1::i2c::{Mock as I2cMock, Transaction};"
+    )]
+    #[cfg_attr(
+        feature = "embedded-hal",
+        doc = "use embedded_hal_mock::eh1::delay::NoopDelay;"
+    )]
     #[cfg_attr(feature = "embedded-hal", doc = "use sen6x::{Sen6x, Sen66Commands};")]
     #[cfg_attr(feature = "embedded-hal", doc = "")]
-    #[cfg_attr(feature = "embedded-hal", doc = "// The SEN6x lives at I²C address 0x6B; starting a measurement writes command 0x0021.")]
-    #[cfg_attr(feature = "embedded-hal", doc = "let mut i2c = I2cMock::new(&[Transaction::write(0x6B, vec![0x00, 0x21])]);")]
+    #[cfg_attr(
+        feature = "embedded-hal",
+        doc = "// The SEN6x lives at I²C address 0x6B; starting a measurement writes command 0x0021."
+    )]
+    #[cfg_attr(
+        feature = "embedded-hal",
+        doc = "let mut i2c = I2cMock::new(&[Transaction::write(0x6B, vec![0x00, 0x21])]);"
+    )]
     #[cfg_attr(feature = "embedded-hal", doc = "let mut delay = NoopDelay::new();")]
     #[cfg_attr(feature = "embedded-hal", doc = "")]
-    #[cfg_attr(feature = "embedded-hal", doc = "let mut sensor = Sen6x::new(&mut i2c, &mut delay);")]
-    #[cfg_attr(feature = "embedded-hal", doc = "sensor.start_continuous_measurement()?;")]
+    #[cfg_attr(
+        feature = "embedded-hal",
+        doc = "let mut sensor = Sen6x::new(&mut i2c, &mut delay);"
+    )]
+    #[cfg_attr(
+        feature = "embedded-hal",
+        doc = "sensor.start_continuous_measurement()?;"
+    )]
     #[cfg_attr(feature = "embedded-hal", doc = "")]
-    #[cfg_attr(feature = "embedded-hal", doc = "i2c.done(); // all expected I²C traffic happened")]
-    #[cfg_attr(feature = "embedded-hal", doc = "# Ok::<(), sen6x::Error<embedded_hal::i2c::ErrorKind>>(())")]
+    #[cfg_attr(
+        feature = "embedded-hal",
+        doc = "i2c.done(); // all expected I²C traffic happened"
+    )]
+    #[cfg_attr(
+        feature = "embedded-hal",
+        doc = "# Ok::<(), sen6x::Error<embedded_hal::i2c::ErrorKind>>(())"
+    )]
     #[cfg_attr(feature = "embedded-hal", doc = "```")]
     pub fn new<I2C>(i2c: I2C, delay: &'a mut D) -> Self
     where

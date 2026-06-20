@@ -52,7 +52,7 @@ where
         this.transaction(async move |i2c| {
             i2c.write(S::I2C_ADDRESS, &(cmd as u16).to_be_bytes())
                 .await
-                .map_err(|e| errors::Error::I2c(e))?;
+                .map_err(errors::Error::I2c)?;
             this.delay(execution_time).await;
             Ok(())
         })
@@ -78,7 +78,7 @@ where
                 ],
             )
             .await
-            .map_err(|e| errors::Error::I2c(e))?;
+            .map_err(errors::Error::I2c)?;
             this.delay(execution_time).await;
             Ok(())
         })
@@ -96,12 +96,12 @@ where
         this.transaction(async move |i2c| {
             i2c.write(S::I2C_ADDRESS, &(cmd as u16).to_be_bytes())
                 .await
-                .map_err(|e| errors::Error::I2c(e))?;
+                .map_err(errors::Error::I2c)?;
             this.delay(execution_time).await;
             let mut buffer = [0u8; N];
             i2c.read(S::I2C_ADDRESS, &mut buffer)
                 .await
-                .map_err(|e| errors::Error::I2c(e))?;
+                .map_err(errors::Error::I2c)?;
             Rx::from_bytes_with_crc(&buffer)
         })
         .await
@@ -126,12 +126,12 @@ where
                 ],
             )
             .await
-            .map_err(|e| errors::Error::I2c(e))?;
+            .map_err(errors::Error::I2c)?;
             this.delay(execution_time).await;
             let mut buffer = [0u8; NR];
             i2c.read(S::I2C_ADDRESS, &mut buffer)
                 .await
-                .map_err(|e| errors::Error::I2c(e))?;
+                .map_err(errors::Error::I2c)?;
             Rx::from_bytes_with_crc(&buffer)
         })
         .await

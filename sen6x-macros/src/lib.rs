@@ -263,10 +263,8 @@ pub fn sen_cmd(input: TokenStream) -> TokenStream {
                     let allowed_modes_part =
                         quote! { [#( crate::connection::State::#send_allowed_modes ),*] };
                     let command_id = &v.ident;
-                    let name = Ident::new(
-                        &snake_case(c_ident.to_string().as_str()),
-                        Span::call_site(),
-                    );
+                    let name =
+                        Ident::new(&snake_case(c_ident.to_string().as_str()), Span::call_site());
 
                     let update_state = match new_state {
                         Some(s) => quote! {
@@ -321,10 +319,8 @@ pub fn sen_cmd(input: TokenStream) -> TokenStream {
                     let allowed_modes_part =
                         quote! { [#( crate::connection::State::#rx_allowed_modes ),*] };
                     let command_id = &v.ident;
-                    let name = Ident::new(
-                        &snake_case(c_ident.to_string().as_str()),
-                        Span::call_site(),
-                    );
+                    let name =
+                        Ident::new(&snake_case(c_ident.to_string().as_str()), Span::call_site());
 
                     let ctargets: Vec<String> = if targets.is_empty() {
                         all_models.iter().map(|t| t.to_string()).collect()
