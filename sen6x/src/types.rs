@@ -10,11 +10,12 @@ pub type Milliseconds = u16;
 pub struct MicrogramsPerCubicMeter {
     value: u16,
 }
-impl Into<f32> for MicrogramsPerCubicMeter {
-    fn into(self) -> f32 {
-        self.value as f32 / 10f32
+impl From<MicrogramsPerCubicMeter> for f32 {
+    fn from(value: MicrogramsPerCubicMeter) -> f32 {
+        value.value as f32 / 10f32
     }
 }
+
 
 impl ValueWrapper for MicrogramsPerCubicMeter {
     type Inner = u16;
@@ -31,9 +32,9 @@ pub struct Percent {
     value: i16,
 }
 
-impl Into<f32> for Percent {
-    fn into(self) -> f32 {
-        self.value as f32 / 100f32
+impl From<Percent> for f32 {
+    fn from(value: Percent) -> f32 {
+        value.value as f32 / 100f32
     }
 }
 
@@ -51,10 +52,9 @@ impl ValueWrapper for Percent {
 pub struct DegCelsius {
     value: i16,
 }
-
-impl Into<f32> for DegCelsius {
-    fn into(self) -> f32 {
-        self.value as f32 / 200f32
+impl From<DegCelsius> for f32 {
+    fn from(value: DegCelsius) -> f32 {
+        value.value as f32 / 200f32
     }
 }
 
@@ -73,9 +73,9 @@ pub struct Index {
     value: i16,
 }
 
-impl Into<f32> for Index {
-    fn into(self) -> f32 {
-        self.value as f32 / 10f32
+impl From<Index> for f32 {
+    fn from(value: Index) -> f32 {
+        value.value as f32 / 10f32
     }
 }
 
@@ -94,9 +94,9 @@ pub struct Ppm {
     value: i16,
 }
 
-impl Into<f32> for Ppm {
-    fn into(self) -> f32 {
-        self.value as f32
+impl From<Ppm> for f32 {
+    fn from(value: Ppm) -> f32 {
+        value.value as f32
     }
 }
 
@@ -115,9 +115,9 @@ pub struct PpmU16 {
     value: u16,
 }
 
-impl Into<f32> for PpmU16 {
-    fn into(self) -> f32 {
-        self.value as f32
+impl From<PpmU16> for f32 {
+    fn from(value: PpmU16) -> f32 {
+        value.value as f32
     }
 }
 
@@ -137,9 +137,9 @@ pub struct Ppb {
     value: i16,
 }
 
-impl Into<f32> for Ppb {
-    fn into(self) -> f32 {
-        self.value as f32 / 10f32
+impl From<Ppb> for f32 {
+    fn from(value: Ppb) -> f32 {
+        value.value as f32 / 10f32
     }
 }
 
@@ -158,9 +158,9 @@ pub struct ParticlesPerCm3 {
     value: u16,
 }
 
-impl Into<f32> for ParticlesPerCm3 {
-    fn into(self) -> f32 {
-        self.value as f32 / 10f32
+impl From<ParticlesPerCm3> for f32 {
+    fn from(value: ParticlesPerCm3) -> f32 {
+        value.value as f32 / 10f32
     }
 }
 
@@ -176,26 +176,26 @@ impl ValueWrapper for ParticlesPerCm3 {
 
 // hectapascals
 #[derive(Debug, Copy, Clone)]
-pub struct HPa {
+pub struct Hpa {
     value: u16,
 }
 
-impl HPa {
+impl Hpa {
     pub fn new(value: u16) -> Self {
-        HPa { value }
+        Hpa { value }
     }
 }
 
-impl Into<f32> for HPa {
-    fn into(self) -> f32 {
-        self.value as f32
+impl From<Hpa> for f32 {
+    fn from(value: Hpa) -> f32 {
+        value.value as f32
     }
 }
 
-impl ValueWrapper for HPa {
+impl ValueWrapper for Hpa {
     type Inner = u16;
     fn wrap(value: u16) -> Self {
-        HPa { value }
+        Hpa { value }
     }
     fn unwrap(&self) -> Self::Inner {
         self.value
@@ -207,9 +207,10 @@ pub struct Meters {
     value: u16,
 }
 
-impl Into<f32> for Meters {
-    fn into(self) -> f32 {
-        self.value as f32
+
+impl From<Meters> for f32 {
+    fn from(value: Meters) -> f32 {
+        value.value as f32
     }
 }
 
@@ -232,9 +233,6 @@ impl FromBytes<48, FixedStr<32>> for FixedStr<32> {
     }
 }
 
-/// Sensor structs
-
-#[cfg_attr(feature = "serde", derive(serde::Serialize))]
 #[derive(Debug, SenRead, PartialEq)]
 pub struct DataReady {
     /// True if data is ready, False if not. When no measurement is running, False will be returned.
@@ -242,7 +240,7 @@ pub struct DataReady {
 }
 
 #[derive(SenRead, Debug, Clone, PartialEq)]
-pub struct MeasuredValues {
+pub struct MeasuredValuesSen62 {
     ///Mass Concentration PM1.0
     pub pm_1_0: Option<MicrogramsPerCubicMeter>,
     ///Mass Concentration PM2.5
@@ -255,80 +253,169 @@ pub struct MeasuredValues {
     pub ambient_humidity: Option<Percent>,
     /// Ambient Temperature
     pub ambient_temperature: Option<DegCelsius>,
-    #[cfg(any(
-        feature = "sen65",
-        feature = "sen66",
-        feature = "sen68",
-        feature = "sen69c"
-    ))]
+}
+
+#[derive(SenRead, Debug, Clone, PartialEq)]
+pub struct MeasuredValuesSen63c {
+    ///Mass Concentration PM1.0
+    pub pm_1_0: Option<MicrogramsPerCubicMeter>,
+    ///Mass Concentration PM2.5
+    pub pm_2_5: Option<MicrogramsPerCubicMeter>,
+    ///Mass Concentration PM4.0
+    pub pm_4_0: Option<MicrogramsPerCubicMeter>,
+    /// Mass Concentration PM10.0
+    pub pm_10_0: Option<MicrogramsPerCubicMeter>,
+    /// Ambient Humidity
+    pub ambient_humidity: Option<Percent>,
+    /// Ambient Temperature
+    pub ambient_temperature: Option<DegCelsius>,
+    /// CO2 concentration
+    pub co2: Option<Ppm>,
+}
+#[derive(SenRead, Debug, Clone, PartialEq)]
+pub struct MeasuredValuesSen65 {
+    ///Mass Concentration PM1.0
+    pub pm_1_0: Option<MicrogramsPerCubicMeter>,
+    ///Mass Concentration PM2.5
+    pub pm_2_5: Option<MicrogramsPerCubicMeter>,
+    ///Mass Concentration PM4.0
+    pub pm_4_0: Option<MicrogramsPerCubicMeter>,
+    /// Mass Concentration PM10.0
+    pub pm_10_0: Option<MicrogramsPerCubicMeter>,
+    /// Ambient Humidity
+    pub ambient_humidity: Option<Percent>,
+    /// Ambient Temperature
+    pub ambient_temperature: Option<DegCelsius>,
     /// VOC Index
     pub voc_index: Option<Index>,
-    #[cfg(any(
-        feature = "sen65",
-        feature = "sen66",
-        feature = "sen68",
-        feature = "sen69c"
-    ))]
     /// NOx Index
     pub nox_index: Option<Index>,
-    #[cfg(any(feature = "sen68", feature = "sen69c"))]
+}
+#[derive(SenRead, Debug, Clone, PartialEq)]
+pub struct MeasuredValuesSen66 {
+    ///Mass Concentration PM1.0
+    pub pm_1_0: Option<MicrogramsPerCubicMeter>,
+    ///Mass Concentration PM2.5
+    pub pm_2_5: Option<MicrogramsPerCubicMeter>,
+    ///Mass Concentration PM4.0
+    pub pm_4_0: Option<MicrogramsPerCubicMeter>,
+    /// Mass Concentration PM10.0
+    pub pm_10_0: Option<MicrogramsPerCubicMeter>,
+    /// Ambient Humidity
+    pub ambient_humidity: Option<Percent>,
+    /// Ambient Temperature
+    pub ambient_temperature: Option<DegCelsius>,
+    /// VOC Index
+    pub voc_index: Option<Index>,
+    /// NOx Index
+    pub nox_index: Option<Index>,
+    /// CO2 concentration
+    pub co2: Option<Ppm>,
+}
+
+#[derive(SenRead, Debug, Clone, PartialEq)]
+pub struct MeasuredValuesSen68 {
+    ///Mass Concentration PM1.0
+    pub pm_1_0: Option<MicrogramsPerCubicMeter>,
+    ///Mass Concentration PM2.5
+    pub pm_2_5: Option<MicrogramsPerCubicMeter>,
+    ///Mass Concentration PM4.0
+    pub pm_4_0: Option<MicrogramsPerCubicMeter>,
+    /// Mass Concentration PM10.0
+    pub pm_10_0: Option<MicrogramsPerCubicMeter>,
+    /// Ambient Humidity
+    pub ambient_humidity: Option<Percent>,
+    /// Ambient Temperature
+    pub ambient_temperature: Option<DegCelsius>,
+    /// VOC Index
+    pub voc_index: Option<Index>,
+    /// NOx Index
+    pub nox_index: Option<Index>,
     /// Formaldehyde concentration
-    hcho: Option<Ppb>,
-    #[cfg(any(feature = "sen63c", feature = "sen66", feature = "sen69c"))]
+    pub hcho: Option<Ppb>,
+}
+
+#[derive(SenRead, Debug, Clone, PartialEq)]
+pub struct MeasuredValuesSen69c {
+    ///Mass Concentration PM1.0
+    pub pm_1_0: Option<MicrogramsPerCubicMeter>,
+    ///Mass Concentration PM2.5
+    pub pm_2_5: Option<MicrogramsPerCubicMeter>,
+    ///Mass Concentration PM4.0
+    pub pm_4_0: Option<MicrogramsPerCubicMeter>,
+    /// Mass Concentration PM10.0
+    pub pm_10_0: Option<MicrogramsPerCubicMeter>,
+    /// Ambient Humidity
+    pub ambient_humidity: Option<Percent>,
+    /// Ambient Temperature
+    pub ambient_temperature: Option<DegCelsius>,
+    /// VOC Index
+    pub voc_index: Option<Index>,
+    /// NOx Index
+    pub nox_index: Option<Index>,
+    /// Formaldehyde concentration
+    pub hcho: Option<Ppb>,
     /// CO2 concentration
     pub co2: Option<Ppm>,
 }
 
 #[derive(SenRead, Debug, Clone)]
-pub struct RawValues {
+pub struct RawValuesSen62_3c {
     /// Ambient Humidity
-    ambient_humidity: Option<Percent>,
+    pub ambient_humidity: Option<Percent>,
     /// Ambient Temperature
-    ambient_temperature: Option<DegCelsius>,
-    #[cfg(any(
-        feature = "sen65",
-        feature = "sen66",
-        feature = "sen68",
-        feature = "sen69c"
-    ))]
+    pub ambient_temperature: Option<DegCelsius>,
+}
+
+#[derive(SenRead, Debug, Clone)]
+pub struct RawValuesSen65_8_9c {
+    /// Ambient Humidity
+    pub ambient_humidity: Option<Percent>,
+    /// Ambient Temperature
+    pub ambient_temperature: Option<DegCelsius>,
     /// VOC Index
-    voc_index: Option<Index>,
-    #[cfg(any(
-        feature = "sen65",
-        feature = "sen66",
-        feature = "sen68",
-        feature = "sen69c"
-    ))]
+    pub voc_index: Option<Index>,
     /// NOx Index
-    nox_index: Option<Index>,
-    #[cfg(any(feature = "sen66"))]
+    pub nox_index: Option<Index>,
+}
+
+#[derive(SenRead, Debug, Clone)]
+pub struct RawValuesSen66 {
+    /// Ambient Humidity
+    pub ambient_humidity: Option<Percent>,
+    /// Ambient Temperature
+    pub ambient_temperature: Option<DegCelsius>,
+    /// VOC Index
+    pub voc_index: Option<Index>,
+    /// NOx Index
+    pub nox_index: Option<Index>,
     /// CO2 concentration
-    co2: Option<Ppm>,
+    pub co2: Option<Ppm>,
 }
 
 #[derive(SenRead, Debug, Clone)]
 pub struct NumberConcentrationValues {
-    pm_0_5: Option<ParticlesPerCm3>,
-    pm_1_0: Option<ParticlesPerCm3>,
-    pm_2_5: Option<ParticlesPerCm3>,
-    pm_4_0: Option<ParticlesPerCm3>,
-    pm_10: Option<ParticlesPerCm3>,
+    pub pm_0_5: Option<ParticlesPerCm3>,
+    pub pm_1_0: Option<ParticlesPerCm3>,
+    pub pm_2_5: Option<ParticlesPerCm3>,
+    pub pm_4_0: Option<ParticlesPerCm3>,
+    pub pm_10: Option<ParticlesPerCm3>,
 }
 
 #[derive(SenRead, Debug, Clone)]
 pub struct TemperatureOffsetParameters {
-    offset: DegCelsius,
-    slope: i16,
-    time_constant: u16,
-    slot: u16,
+    pub offset: DegCelsius,
+    pub slope: i16,
+    pub time_constant: u16,
+    pub slot: u16,
 }
 
 #[derive(SenRead, Debug, Clone)]
 pub struct TemperatureAccelerationParameters {
-    k: u16,
-    p: u16,
-    t1: u16,
-    t2: u16,
+    pub k: u16,
+    pub p: u16,
+    pub t1: u16,
+    pub t2: u16,
 }
 
 layout! {
@@ -339,7 +426,7 @@ layout! {
         let __ @ 20..13;
         let co2_1_error @ 12;
         let pm_error @ 11;
-        let hchco_error @ 10;
+        let hcho_error @ 10;
         let co2_2_error @ 9;
         let __ @ 8;
         let gas_error @ 7;
@@ -362,29 +449,29 @@ impl ValueWrapper for DeviceStatus {
 
 #[derive(SenRead, Debug, Clone)]
 pub struct Version {
-    major: u8,
-    minor: u8,
+    pub major: u8,
+    pub minor: u8,
 }
 
 #[derive(SenRead, Debug, Clone)]
-pub struct SHTHeaterMeasurements {
-    sht_relative_humidity: Option<Percent>,
-    sht_temperature: Option<DegCelsius>,
+pub struct ShtHeaterMeasurements {
+    pub sht_relative_humidity: Option<Percent>,
+    pub sht_temperature: Option<DegCelsius>,
 }
 
 #[derive(SenRead, Debug, Clone)]
-pub struct VOCAlgorithmTuningParameters {
-    index_offset: i16,
-    learning_time_offset_hours: i16,
-    learning_time_gain_hours: i16,
-    gating_max_duration_minutes: i16,
-    std_initial: i16,
-    gain_factor: i16,
+pub struct VocAlgorithmTuningParameters {
+    pub index_offset: i16,
+    pub learning_time_offset_hours: i16,
+    pub learning_time_gain_hours: i16,
+    pub gating_max_duration_minutes: i16,
+    pub std_initial: i16,
+    pub gain_factor: i16,
 }
 
 #[derive(SenRead, Debug, Clone)]
-pub struct VOCAlgorithmState {
-    state: [u8; 8],
+pub struct VocAlgorithmState {
+    pub state: [u8; 8],
 }
 
 impl FromBytes<12, [u8; 8]> for [u8; 8] {
@@ -394,18 +481,18 @@ impl FromBytes<12, [u8; 8]> for [u8; 8] {
 }
 
 #[derive(SenRead, Debug, Clone)]
-pub struct NOxAlgorithmTuningParameters {
-    index_offset: i16,
-    learning_time_offset_hours: i16,
-    learning_time_gain_hours: i16,
-    gating_max_duration_minutes: i16,
-    std_initial: i16,
-    gain_factor: i16,
+pub struct NoxAlgorithmTuningParameters {
+    pub index_offset: i16,
+    pub learning_time_offset_hours: i16,
+    pub learning_time_gain_hours: i16,
+    pub gating_max_duration_minutes: i16,
+    pub std_initial: i16,
+    pub gain_factor: i16,
 }
 
 #[derive(SenRead, Debug, Clone)]
 pub struct Co2Correction {
-    result: Option<u16>,
+    pub result: Option<u16>,
 }
 
 impl Co2Correction {

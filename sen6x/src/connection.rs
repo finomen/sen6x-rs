@@ -8,8 +8,31 @@ pub(crate) enum State {
     Measurement,
 }
 
+pub(crate) trait SensorModel {
+    const I2C_ADDRESS: u8;
+}
+
+macro_rules! sensor_model {
+    ($model:ident, $addr:literal) => {
+        pub struct $model;
+        impl SensorModel for $model {
+            const I2C_ADDRESS: u8 = $addr;
+        }
+    };
+}
+
+sensor_model!(Sen62, 0x62);
+sensor_model!(Sen63c, 0x63);
+sensor_model!(Sen65, 0x65);
+sensor_model!(Sen66, 0x66);
+sensor_model!(Sen68, 0x68);
+sensor_model!(Sen69c, 0x69);
+
 #[cfg(feature = "embedded-hal")]
-pub(crate) trait Sen6xConnection<E> {
+pub(crate) trait Sen6xConnection<S, E>
+where
+    S: SensorModel,
+{
     fn send(
         &mut self,
         md: CommandId,
@@ -41,11 +64,14 @@ pub(crate) trait Sen6xConnection<E> {
 
 #[cfg(feature = "embedded-hal-async")]
 pub mod hal_async {
-    use super::State;
+    use super::{SensorModel, State};
     use crate::commands::CommandId;
     use crate::io::{FromBytes, ToBytes};
     use crate::types::Milliseconds;
-    pub(crate) trait Sen6xConnection<E> {
+    pub(crate) trait Sen6xConnection<S, E>
+    where
+        S: SensorModel,
+    {
         async fn send(
             &mut self,
             cmd: CommandId,

@@ -2,7 +2,7 @@ use crate::commands::CommandId;
 use crate::connection::State;
 use crate::io::{FromBytes, ToBytes};
 use crate::types::Milliseconds;
-use crate::{SEN6X_I2C_ADDRESS, Sen6x, SensorConnectionAsync, SensorState, errors};
+use crate::{Sen6x, SensorConnectionAsync, SensorState, errors};
 use core::cell::RefCell;
 use embedded_hal::i2c::Operation;
 use embedded_hal_async::delay::DelayNs;
@@ -27,9 +27,10 @@ where
     }
 }
 
-impl<T> crate::connection::hal_async::Sen6xConnection<T::Error> for T
+impl<S, T> crate::connection::hal_async::Sen6xConnection<S, T::Error> for T
 where
     T: SensorConnectionAsync + SensorState<T::Error>,
+    S: crate::connection::SensorModel,
 {
     async fn send(
         &mut self,
@@ -40,7 +41,7 @@ where
         self.check_state(valid_in)?;
         let this = &*self;
         this.transaction(async move |i2c| {
-            i2c.write(SEN6X_I2C_ADDRESS, &(cmd as u16).to_be_bytes())
+            i2c.write(S::I2C_ADDRESS, &(cmd as u16).to_be_bytes())
                 .await
                 .map_err(|e| errors::Error::I2c(e))?;
             this.delay(execution_time).await;
@@ -61,7 +62,7 @@ where
 
         this.transaction(async move |i2c| {
             i2c.transaction(
-                SEN6X_I2C_ADDRESS,
+                S::I2C_ADDRESS,
                 &mut [
                     Operation::Write(&(cmd as u16).to_be_bytes()),
                     Operation::Write(&data.to_bytes()),
@@ -84,12 +85,12 @@ where
         self.check_state(valid_in)?;
         let this = &*self;
         this.transaction(async move |i2c| {
-            i2c.write(SEN6X_I2C_ADDRESS, &(cmd as u16).to_be_bytes())
+            i2c.write(S::I2C_ADDRESS, &(cmd as u16).to_be_bytes())
                 .await
                 .map_err(|e| errors::Error::I2c(e))?;
             this.delay(execution_time).await;
             let mut buffer = [0u8; N];
-            i2c.read(SEN6X_I2C_ADDRESS, &mut buffer)
+            i2c.read(S::I2C_ADDRESS, &mut buffer)
                 .await
                 .map_err(|e| errors::Error::I2c(e))?;
             Rx::from_bytes_with_crc(&buffer)
@@ -109,7 +110,7 @@ where
 
         this.transaction(async move |i2c| {
             i2c.transaction(
-                SEN6X_I2C_ADDRESS,
+                S::I2C_ADDRESS,
                 &mut [
                     Operation::Write(&(cmd as u16).to_be_bytes()),
                     Operation::Write(&data.to_bytes()),
@@ -119,7 +120,7 @@ where
             .map_err(|e| errors::Error::I2c(e))?;
             this.delay(execution_time).await;
             let mut buffer = [0u8; NR];
-            i2c.read(SEN6X_I2C_ADDRESS, &mut buffer)
+            i2c.read(S::I2C_ADDRESS, &mut buffer)
                 .await
                 .map_err(|e| errors::Error::I2c(e))?;
             Rx::from_bytes_with_crc(&buffer)

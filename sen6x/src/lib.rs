@@ -2,8 +2,6 @@
 //! This driver is compatible with `embedded-hal` v1.0.
 #![cfg_attr(not(test), no_std)]
 
-mod sen5x;
-
 pub mod commands;
 
 mod errors;
@@ -21,23 +19,24 @@ pub mod types;
 
 pub use sen6x_macros::SenRead;
 
-use crate::commands::CommandId;
 use crate::connection::State;
-use crate::io::{FromBytes, ToBytes};
+use crate::io::ToBytes;
 use crate::types::Milliseconds;
 #[cfg(feature = "embassy")]
-use embassy_sync::mutex::{Mutex, MutexGuard};
+use embassy_sync::mutex::{Mutex};
 
-use embedded_hal::i2c::Operation;
 
+/// # Thread safety
+/// `Sen6x` uses [`core::cell::RefCell`] for interior mutability, so it is
+/// [`Send`] but not [`Sync`]. The driver is intended to be owned by a single
+/// task; sharing one instance across threads is not supported. For shared-bus
+/// setups, use the `embassy` feature, which guards the bus with a `Mutex`.
+#[derive(Debug)]
 pub struct Sen6x<'a, I2C, D> {
     i2c: I2C,
     delay: RefCell<&'a mut D>,
     state: State,
 }
-
-const SEN6X_I2C_ADDRESS: u8 = 0x6B;
-
 trait SensorConnectionSync {
     type I2c: embedded_hal::i2c::I2c<Error = Self::Error>;
     type Delay: embedded_hal::delay::DelayNs;
@@ -133,6 +132,21 @@ impl<'a, C, D> Sen6x<'a, C, D> {
 }
 
 #[cfg(feature = "embedded-hal")]
-pub use commands::Sen6xCommands;
+pub use commands::{
+    Sen62Commands, Sen63cCommands, Sen65Commands, Sen66Commands, Sen68Commands, Sen69cCommands,
+};
 #[cfg(feature = "embedded-hal-async")]
-pub use commands::Sen6xCommandsAsync;
+pub use commands::{
+    Sen62CommandsAsync, Sen63cCommandsAsync, Sen65CommandsAsync, Sen66CommandsAsync,
+    Sen68CommandsAsync, Sen69cCommandsAsync,
+};
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn sen6x_is_send() {
+        fn assert_send<T: Send>() {}
+        assert_send::<Sen6x<'static, RefCell<&'static mut u8>, u8>>();
+    }
+}
