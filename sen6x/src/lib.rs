@@ -28,10 +28,10 @@ use core::cell::RefCell;
 pub use errors::Error;
 
 mod connection;
-#[cfg(feature = "embedded-hal")]
-mod connection_sync;
 #[cfg(feature = "embedded-hal-async")]
 mod connection_async;
+#[cfg(feature = "embedded-hal")]
+mod connection_sync;
 mod io;
 pub mod types;
 

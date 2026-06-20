@@ -60,13 +60,13 @@ jobs:
         if: matrix.profile == 'debug'
         run: rustup component add llvm-tools-preview
       - name: Build
-        run: cargo build --verbose ${{ matrix.profile == 'release' && '--release' || '' }} --features embedded-hal,embedded-hal-async,embassy
+        run: cargo build --verbose ${{ matrix.profile == 'release' && '--release' || '' }} --features embedded-hal,embedded-hal-async,embassy,serde
       - name: Run tests with coverage (debug)
         if: matrix.profile == 'debug'
-        run: cargo llvm-cov nextest --verbose --lcov --output-path lcov.info --features embedded-hal,embedded-hal-async,embassy
+        run: cargo llvm-cov nextest --verbose --lcov --output-path lcov.info --features embedded-hal,embedded-hal-async,embassy,serde
       - name: Run tests (release)
         if: matrix.profile == 'release'
-        run: cargo nextest run --verbose --release --features embedded-hal,embedded-hal-async,embassy
+        run: cargo nextest run --verbose --release --features embedded-hal,embedded-hal-async,embassy,serde
 
       - name: Publish test results
         uses: dorny/test-reporter@v1
