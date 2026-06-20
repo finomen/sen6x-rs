@@ -1,0 +1,72 @@
+name: Cargo Tests
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+env:
+  CARGO_TERM_COLOR: always
+  NEXTEST_PROFILE: ci
+
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+
+jobs:
+  fmt:
+    name: Check formatting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install rustfmt
+        run: rustup component add rustfmt
+      - name: Check formatting
+        run: cargo fmt --all -- --check
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        sensor: [ sen62, sen63c, sen65, sen66, sen68, sen69c ]
+        profile: [ debug, release ]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Cache build dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ matrix.sensor }}-${{ matrix.profile }}
+      - name: Install cargo-nextest and cargo-llvm-cov
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-nextest,cargo-llvm-cov
+      - name: Install llvm-tools-preview
+        if: matrix.profile == 'debug'
+        run: rustup component add llvm-tools-preview
+      - name: Build
+        run: cargo build --verbose ${{ matrix.profile == 'release' && '--release' || '' }} --features embedded-hal,embedded-hal-async,embassy,serde,${{ matrix.sensor }}
+      - name: Run tests with coverage (debug)
+        if: matrix.profile == 'debug'
+        run: cargo llvm-cov nextest --verbose --lcov --output-path lcov.info --features embedded-hal,embedded-hal-async,embassy,serde,${{ matrix.sensor }}
+      - name: Run tests (release)
+        if: matrix.profile == 'release'
+        run: cargo nextest run --verbose --release --features embedded-hal,embedded-hal-async,embassy,serde,${{ matrix.sensor }}
+
+      - name: Publish test results
+        uses: dorny/test-reporter@v1
+        if: success() || failure()
+        with:
+          name: Tests (${{ matrix.sensor }}, ${{ matrix.profile }})
+          path: target/nextest/ci/junit.xml
+          reporter: java-junit
+
+      - name: Upload coverage to Codecov
+        if: matrix.profile == 'debug'
+        uses: codecov/codecov-action@v4
+        with:
+          files: lcov.info
+          flags: ${{ matrix.sensor }}
+          token: ${{ secrets.CODECOV_TOKEN }}

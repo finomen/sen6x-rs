@@ -1,0 +1,5 @@
+# Nextest configuration.
+# The `ci` profile emits a JUnit XML report consumed by the
+# `Publish test results` step in .github/workflows/cargo_test.yml.
+[profile.ci.junit]
+path = "junit.xml"
