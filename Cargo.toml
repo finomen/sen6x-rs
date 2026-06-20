@@ -1,4 +1,5 @@
 [workspace]
-members = ["sen6x", "sen6x-macros"]
+resolver = "3"
+members = ["sen6x", "sen6x-macros", "examples/esp32-embassy"]
 default-members = ["sen6x"]
 
