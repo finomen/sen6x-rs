@@ -2,6 +2,7 @@
 name = "sen6x-example-esp32-embassy"
 version = "0.0.1"
 edition = "2021"
+publish = false
 
 [dependencies]
 esp-hal = { version = "1.1.1", features = ["esp32c5", "unstable"] }

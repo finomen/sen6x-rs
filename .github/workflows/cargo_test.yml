@@ -83,6 +83,22 @@ jobs:
           files: lcov.info
           token: ${{ secrets.CODECOV_TOKEN }}
 
+  publish-dry-run:
+    name: Publish dry-run
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+      - name: Cache build dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          key: publish-dry-run
+      - name: Dry-run publish
+        uses: katyo/publish-crates@v2
+        with:
+          dry-run: true
+
   example:
     name: Build example (esp32-embassy)
     runs-on: ubuntu-latest
