@@ -1,5 +1,22 @@
 //! This library provides an embedded `no_std` driver for the [Sensirion SEN6x series](https://sensirion.com/media/documents/FAFC548D/693FBB15/PS_DS_SEN6x.pdf).
 //! This driver is compatible with `embedded-hal` v1.0.
+//!
+//! # Errors
+//!
+//! Every command method returns [`Result`]`<_, `[`Error`]`<E>>`, where `E` is the
+//! I²C bus error type of the underlying `embedded-hal` implementation. The
+//! [`Error`] variants are:
+//!
+//! - [`Error::I2c`] — the underlying I²C transfer failed; the bus error is wrapped.
+//! - [`Error::Crc`] — a CRC-8 checksum in the sensor's response did not match, indicating a corrupted read.
+//! - [`Error::NotAllowed`] — the command is not permitted in the sensor's current
+//!   state (for example, reading measured values while idle, or applying a
+//!   configuration that is only accepted during measurement).
+//! - [`Error::InvalidValue`] — the sensor returned a value outside its defined range.
+//!
+//! Commands that read a response may return any of the four variants. Commands
+//! that only send (with no response) return [`Error::NotAllowed`] or [`Error::I2c`].
+//! Each command method also documents its own `# Errors` section.
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
 #![cfg_attr(not(test), no_std)]
 

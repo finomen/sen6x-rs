@@ -281,14 +281,21 @@ pub fn sen_cmd(input: TokenStream) -> TokenStream {
                         targets.iter().map(|t| t.to_string()).collect()
                     };
 
+                    let errors_doc = quote! {
+                        #[doc = ""]
+                        #[doc = "# Errors"]
+                        #[doc = "Returns [`Error::NotAllowed`](crate::Error::NotAllowed) if the command is not allowed in the current sensor state, or [`Error::I2c`](crate::Error::I2c) if the I²C transfer fails."]
+                    };
                     for tname in ctargets {
                         let t = impls.get_mut(&tname).unwrap();
                         t.headers.push(quote! {
                             #(#send_docs)*
+                            #errors_doc
                             fn #name(&mut self) -> Result<(), crate::errors::Error<E>>;
                         });
                         t.async_headers.push(quote! {
                             #(#send_docs)*
+                            #errors_doc
                             async fn #name(&mut self) -> Result<(), crate::errors::Error<E>>;
                         });
                         t.impls.push(quote! {
@@ -325,14 +332,21 @@ pub fn sen_cmd(input: TokenStream) -> TokenStream {
                         targets.iter().map(|t| t.to_string()).collect()
                     };
 
+                    let errors_doc = quote! {
+                        #[doc = ""]
+                        #[doc = "# Errors"]
+                        #[doc = "Returns [`Error::NotAllowed`](crate::Error::NotAllowed) if the command is not allowed in the current sensor state, [`Error::I2c`](crate::Error::I2c) if the I²C transfer fails, [`Error::Crc`](crate::Error::Crc) if the response CRC is invalid, or [`Error::InvalidValue`](crate::Error::InvalidValue) if the sensor returns an out-of-range value."]
+                    };
                     for tname in ctargets {
                         let t = impls.get_mut(&tname).unwrap();
                         t.headers.push(quote! {
                             #(#read_docs)*
+                            #errors_doc
                             fn #name(&mut self) -> Result<#rx, crate::errors::Error<E>>;
                         });
                         t.async_headers.push(quote! {
                             #(#read_docs)*
+                            #errors_doc
                             async fn #name(&mut self) -> Result<#rx, crate::errors::Error<E>>;
                         });
                         t.impls.push(quote! {
@@ -365,14 +379,21 @@ pub fn sen_cmd(input: TokenStream) -> TokenStream {
                         targets.iter().map(|t| t.to_string()).collect()
                     };
 
+                    let errors_doc = quote! {
+                        #[doc = ""]
+                        #[doc = "# Errors"]
+                        #[doc = "Returns [`Error::NotAllowed`](crate::Error::NotAllowed) if the command is not allowed in the current sensor state, or [`Error::I2c`](crate::Error::I2c) if the I²C transfer fails."]
+                    };
                     for tname in ctargets {
                         let t = impls.get_mut(&tname).unwrap();
                         t.headers.push(quote! {
                             #(#write_docs)*
+                            #errors_doc
                             fn #name(&mut self, tx: #tx) -> Result<(), crate::errors::Error<E>>;
                         });
                         t.async_headers.push(quote! {
                         #(#write_docs)*
+                        #errors_doc
                         async fn #name(&mut self, tx: #tx) -> Result<(), crate::errors::Error<E>>;
                     });
                         t.impls.push(quote! {
@@ -405,14 +426,21 @@ pub fn sen_cmd(input: TokenStream) -> TokenStream {
                         targets.iter().map(|t| t.to_string()).collect()
                     };
 
+                    let errors_doc = quote! {
+                        #[doc = ""]
+                        #[doc = "# Errors"]
+                        #[doc = "Returns [`Error::NotAllowed`](crate::Error::NotAllowed) if the command is not allowed in the current sensor state, [`Error::I2c`](crate::Error::I2c) if the I²C transfer fails, [`Error::Crc`](crate::Error::Crc) if the response CRC is invalid, or [`Error::InvalidValue`](crate::Error::InvalidValue) if the sensor returns an out-of-range value."]
+                    };
                     for tname in ctargets {
                         let t = impls.get_mut(&tname).unwrap();
                         t.headers.push(quote! {
                             #(#fetch_docs)*
+                            #errors_doc
                             fn #name(&mut self, tx: #tx) -> Result<#rx, crate::errors::Error<E>>;
                         });
                         t.async_headers.push(quote! {
                         #(#fetch_docs)*
+                        #errors_doc
                         async fn #name(&mut self, tx: #tx) -> Result<#rx, crate::errors::Error<E>>;
                     });
                         t.impls.push(quote! {
