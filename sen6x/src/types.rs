@@ -9,7 +9,7 @@ pub(crate) type Milliseconds = u16;
 /// A particulate-matter mass concentration, in micrograms per cubic metre (µg/m³).
 ///
 /// Obtain the physical value with `f32::from` (or `.into()`).
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct MicrogramsPerCubicMeter {
     value: u16,
 }
@@ -33,7 +33,7 @@ impl ValueWrapper for MicrogramsPerCubicMeter {
 /// A relative humidity, in percent (%RH).
 ///
 /// Obtain the physical value with `f32::from` (or `.into()`).
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Percent {
     value: i16,
 }
@@ -58,7 +58,7 @@ impl ValueWrapper for Percent {
 /// A temperature, in degrees Celsius (°C).
 ///
 /// Obtain the physical value with `f32::from` (or `.into()`).
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct DegCelsius {
     value: i16,
 }
@@ -82,7 +82,7 @@ impl ValueWrapper for DegCelsius {
 /// A gas-index reading (VOC or NOx index points, nominal range 1–500, 100 ≈ typical).
 ///
 /// Obtain the physical value with `f32::from` (or `.into()`).
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Index {
     value: i16,
 }
@@ -107,7 +107,7 @@ impl ValueWrapper for Index {
 /// A gas concentration, in parts per million (ppm) — used for CO₂.
 ///
 /// Obtain the physical value with `f32::from` (or `.into()`).
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Ppm {
     value: i16,
 }
@@ -133,7 +133,7 @@ impl ValueWrapper for Ppm {
 ///
 /// Used as the reference CO₂ concentration passed to forced recalibration.
 /// Obtain the physical value with `f32::from` (or `.into()`).
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct PpmU16 {
     value: u16,
 }
@@ -159,7 +159,7 @@ impl ValueWrapper for PpmU16 {
 /// A gas concentration, in parts per billion (ppb) — used for formaldehyde (HCHO).
 ///
 /// Obtain the physical value with `f32::from` (or `.into()`).
-#[derive(Debug, Copy, Clone, PartialEq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct Ppb {
     value: i16,
 }
@@ -184,7 +184,7 @@ impl ValueWrapper for Ppb {
 /// A particle number concentration, in particles per cubic centimetre (#/cm³).
 ///
 /// Obtain the physical value with `f32::from` (or `.into()`).
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct ParticlesPerCm3 {
     value: u16,
 }
@@ -210,7 +210,7 @@ impl ValueWrapper for ParticlesPerCm3 {
 ///
 /// Used to set the ambient pressure for the CO₂ sensor. Obtain the physical
 /// value with `f32::from` (or `.into()`).
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct Hpa {
     value: u16,
 }
@@ -248,7 +248,7 @@ impl ValueWrapper for Hpa {
 ///
 /// Used to set the sensor altitude for the CO₂ sensor's pressure compensation.
 /// Obtain the physical value with `f32::from` (or `.into()`).
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct Meters {
     value: u16,
 }
@@ -282,7 +282,7 @@ impl FromBytes<48, FixedStr<32>> for FixedStr<32> {
 }
 
 /// Whether new measurement results are available to read.
-#[derive(Debug, SenRead, PartialEq)]
+#[derive(Debug, SenRead, Clone, Copy, PartialEq, Eq)]
 pub struct DataReady {
     /// `true` if new data is ready. `false` if not, or when no measurement is running.
     pub data_ready: bool,
@@ -435,7 +435,7 @@ pub struct MeasuredValuesSen69c {
 /// Raw (uncompensated) values from a SEN62 or SEN63C.
 ///
 /// A field is `None` when that value is unavailable.
-#[derive(SenRead, Debug, Clone)]
+#[derive(SenRead, Debug, Clone, PartialEq)]
 pub struct RawValuesSen62_3c {
     /// Ambient Humidity
     pub ambient_humidity: Option<Percent>,
@@ -446,7 +446,7 @@ pub struct RawValuesSen62_3c {
 /// Raw (uncompensated) values from a SEN65, SEN68 or SEN69C.
 ///
 /// A field is `None` when that value is unavailable.
-#[derive(SenRead, Debug, Clone)]
+#[derive(SenRead, Debug, Clone, PartialEq)]
 pub struct RawValuesSen65_8_9c {
     /// Ambient Humidity
     pub ambient_humidity: Option<Percent>,
@@ -461,7 +461,7 @@ pub struct RawValuesSen65_8_9c {
 /// Raw (uncompensated) values from a SEN66.
 ///
 /// A field is `None` when that value is unavailable.
-#[derive(SenRead, Debug, Clone)]
+#[derive(SenRead, Debug, Clone,PartialEq)]
 pub struct RawValuesSen66 {
     /// Ambient Humidity
     pub ambient_humidity: Option<Percent>,
@@ -479,7 +479,7 @@ pub struct RawValuesSen66 {
 ///
 /// Each field is the number concentration of particles up to the given
 /// aerodynamic diameter. A field is `None` when the value is unavailable.
-#[derive(SenRead, Debug, Clone)]
+#[derive(SenRead, Debug, Clone, PartialEq)]
 pub struct NumberConcentrationValues {
     /// Number concentration of particles ≤ 0.5 µm.
     pub pm_0_5: Option<ParticlesPerCm3>,
@@ -495,7 +495,7 @@ pub struct NumberConcentrationValues {
 
 /// Custom temperature-offset parameters used to compensate the ambient
 /// temperature reading for the host design.
-#[derive(SenRead, Debug, Clone)]
+#[derive(SenRead, Debug, Clone, PartialEq)]
 pub struct TemperatureOffsetParameters {
     /// Constant temperature offset to subtract.
     pub offset: DegCelsius,
@@ -509,7 +509,7 @@ pub struct TemperatureOffsetParameters {
 
 /// Custom temperature-acceleration parameters of the RH/T engine, overriding
 /// the device defaults. See the datasheet for the exact transfer function.
-#[derive(SenRead, Debug, Clone)]
+#[derive(SenRead, Debug, Clone, PartialEq)]
 pub struct TemperatureAccelerationParameters {
     /// Filter constant `K`.
     pub k: u16,
@@ -564,7 +564,7 @@ impl ValueWrapper for DeviceStatus {
 }
 
 /// Device firmware version.
-#[derive(SenRead, Debug, Clone)]
+#[derive(SenRead, Debug, Clone, PartialEq)]
 pub struct Version {
     /// Major firmware version.
     pub major: u8,
@@ -573,7 +573,7 @@ pub struct Version {
 }
 
 /// Humidity and temperature measured by the SHT sensor at the end of a heater cycle.
-#[derive(SenRead, Debug, Clone)]
+#[derive(SenRead, Debug, Clone, PartialEq)]
 pub struct ShtHeaterMeasurements {
     /// Relative humidity reported by the SHT sensor, or `None` if unavailable.
     pub sht_relative_humidity: Option<Percent>,
@@ -586,7 +586,7 @@ pub struct ShtHeaterMeasurements {
 /// See Sensirion's
 /// [VOC Index for Indoor Air Applications](https://sensirion.com/media/documents/02232963/6294E043/Info_Note_VOC_Index.pdf)
 /// for the meaning and valid ranges of each parameter.
-#[derive(SenRead, Debug, Clone)]
+#[derive(SenRead, Debug, Clone, PartialEq)]
 pub struct VocAlgorithmTuningParameters {
     /// Index value the algorithm maps the average condition to (default 100).
     pub index_offset: i16,
@@ -606,7 +606,7 @@ pub struct VocAlgorithmTuningParameters {
 ///
 /// Read it to persist learning across a power cycle or reset, and write it back
 /// before the next measurement to skip the initial learning phase.
-#[derive(SenRead, Debug, Clone)]
+#[derive(SenRead, Debug, Clone, PartialEq)]
 pub struct VocAlgorithmState {
     /// The 8 raw state bytes, treated as an opaque blob.
     pub state: [u8; 8],
@@ -623,7 +623,7 @@ impl FromBytes<12, [u8; 8]> for [u8; 8] {
 /// See Sensirion's
 /// [NOx Index for Indoor Air Applications](https://sensirion.com/media/documents/9F289B95/6294DFFC/Info_Note_NOx_Index.pdf)
 /// for the meaning and valid ranges of each parameter.
-#[derive(SenRead, Debug, Clone)]
+#[derive(SenRead, Debug, Clone, PartialEq)]
 pub struct NoxAlgorithmTuningParameters {
     /// Index value the algorithm maps the average condition to (default 1).
     pub index_offset: i16,
@@ -640,7 +640,7 @@ pub struct NoxAlgorithmTuningParameters {
 }
 
 /// Result of a forced CO₂ recalibration (FRC).
-#[derive(SenRead, Debug, Clone)]
+#[derive(SenRead, Debug, Clone, PartialEq)]
 pub struct Co2Correction {
     /// Raw FRC result word, or `None` if the recalibration failed (`0xFFFF`).
     ///

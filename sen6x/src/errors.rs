@@ -1,5 +1,5 @@
 /// SEN6x errors
-#[derive(Debug, PartialEq, thiserror_no_std::Error)]
+#[derive(Debug, Clone, PartialEq, thiserror_no_std::Error)]
 pub enum Error<E> {
     #[error("I2C: {0}")]
     /// I²C bus error

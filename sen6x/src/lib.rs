@@ -29,9 +29,9 @@ pub use errors::Error;
 
 mod connection;
 #[cfg(feature = "embedded-hal")]
-mod embeded_hal;
+mod connection_sync;
 #[cfg(feature = "embedded-hal-async")]
-mod embeded_hal_async;
+mod connection_async;
 mod io;
 pub mod types;
 
@@ -165,7 +165,7 @@ where
 impl<'a, C, D> Sen6x<'a, C, D> {
     /// Creates a driver from an I²C bus and a delay provider.
     ///
-    /// `i2c` is either an exclusive `&mut` to an [`embedded_hal::i2c::I2c`] /
+    /// `i2c` is either an exclusive `&mut` to an [`connection_sync::i2c::I2c`] /
     /// [`embedded_hal_async::i2c::I2c`] implementation, or — with the `embassy`
     /// feature — a shared `&embassy_sync::mutex::Mutex<_, I2C>` for buses shared
     /// with other drivers. `delay` provides the post-command wait each operation
