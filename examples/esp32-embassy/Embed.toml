@@ -1,0 +1,18 @@
+[default.probe]
+protocol = "Jtag"
+
+[default.flashing]
+enabled = true
+
+[default.reset]
+enabled = true
+halt_afterwards = false
+
+[default.general]
+chip = "esp32c5"
+
+[default.rtt]
+enabled = true
+
+[default.gdb]
+enabled = false
