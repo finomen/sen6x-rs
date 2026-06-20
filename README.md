@@ -25,6 +25,13 @@ matter, relative humidity, temperature, VOC, NOx and either CO2 or formaldehyde,
 
 Further information: [Datasheet SEN6x](https://sensirion.com/media/documents/FAFC548D/693FBB15/PS_DS_SEN6x.pdf)
 
+## GenAI Usage
+
+This project was created with the assistance of Claude and Gemini. Primarily, GenAI is used to:
+- Generate documentation
+- Check code against the datasheet
+- Fix warnings and clean up code
+
 ## License
 
 Licensed under [MIT license](LICENSE)
