@@ -490,7 +490,7 @@ pub struct MeasuredValuesSen69c {
 /// Raw (uncompensated) values from a SEN62 or SEN63C.
 ///
 /// A field is `None` when that value is unavailable.
-#[derive(SenRead, Debug, Clone, PartialEq)]
+#[derive(SenRead, Debug, Clone, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct RawValuesSen62Sen63c {
     /// Ambient Humidity
