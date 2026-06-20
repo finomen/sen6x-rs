@@ -19,7 +19,7 @@ mod io;
 pub mod types;
 
 use crate::connection::State;
-use crate::io::ToBytes;
+#[cfg(any(feature = "embedded-hal", feature = "embedded-hal-async"))]
 use crate::types::Milliseconds;
 #[cfg(feature = "embassy")]
 use embassy_sync::mutex::Mutex;
@@ -35,6 +35,8 @@ pub struct Sen6x<'a, I2C, D> {
     delay: RefCell<&'a mut D>,
     state: State,
 }
+
+#[cfg(feature = "embedded-hal")]
 trait SensorConnectionSync {
     type I2c: embedded_hal::i2c::I2c<Error = Self::Error>;
     type Delay: embedded_hal::delay::DelayNs;
@@ -88,8 +90,13 @@ where
         f(&mut *i2c).await
     }
 
+    // The delay future borrows the timer across the await. Sound because
+    // `Sen6x` is a single-owner, `!Sync` driver (see "Thread safety" above),
+    // so no concurrent borrow of this cell can exist.
+    #[allow(clippy::await_holding_refcell_ref)]
     async fn delay(&self, delay: Milliseconds) {
-        self.delay.borrow_mut().delay_ms(delay as u32).await;
+        let mut d = self.delay.borrow_mut();
+        d.delay_ms(delay as u32).await;
     }
 }
 
@@ -107,7 +114,7 @@ mod sealed {
 /// Conversion of an I²C bus handle into the connection type stored by [`Sen6x`].
 /// This is an implementation detail of [`Sen6x::new`]
 #[doc(hidden)]
-pub trait IntoI2cConnection<'a> {
+pub trait IntoI2cConnection<'a>: sealed::Sealed {
     type Connection;
     fn into_i2c_connection(self) -> Self::Connection;
 }

@@ -7,7 +7,7 @@ This driver is compatible with `embedded-hal v1.0`.
 
 ## Features
 
-- **`embedded-ha;`** - Enables async I2C support via `embedded-hal`.
+- **`embedded-hal`** - Enables async I2C support via `embedded-hal`.
 - **`embedded-hal-async`** - Enables async I2C support via `embedded-hal-async`.
 - **`embassy`** - Enables shared I2C bus support using `embassy::embassy_sync::mutex::Mutex`. This option enables `embedded-hal-async`
 
@@ -27,7 +27,7 @@ Further information: [Datasheet SEN6x](https://sensirion.com/media/documents/FAF
 
 ## License
 
-Licensed under [MIT license](LICENSE-MIT)
+Licensed under [MIT license](LICENSE)
 
 ### Contributing
 

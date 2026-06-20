@@ -17,13 +17,22 @@ where
     type Error = E;
     type Delay = D;
 
+    // The `RefCell` borrow must live across the await: the underlying HAL i2c
+    // future borrows the bus for its whole duration. This is sound because
+    // `Sen6x` is a single-owner, `!Sync` driver (see its "Thread safety" docs),
+    // so no other borrow of the same cell can be live concurrently.
+    #[allow(clippy::await_holding_refcell_ref)]
     async fn transaction<R>(&self, f: impl AsyncFnOnce(&mut I2C) -> R) -> R {
         let mut i2c = self.i2c.borrow_mut();
         f(&mut *i2c).await
     }
 
+    // See `transaction`: the delay future borrows the timer across the await;
+    // sound for the same single-owner, `!Sync` reason.
+    #[allow(clippy::await_holding_refcell_ref)]
     async fn delay(&self, delay: Milliseconds) {
-        self.delay.borrow_mut().delay_ms(delay as u32).await;
+        let mut d = self.delay.borrow_mut();
+        d.delay_ms(delay as u32).await;
     }
 }
 

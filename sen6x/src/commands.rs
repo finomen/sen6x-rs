@@ -1,3 +1,4 @@
+#[cfg(any(feature = "embedded-hal", feature = "embedded-hal-async"))]
 use crate::types::*;
 use sen6x_macros::SenCmd;
 

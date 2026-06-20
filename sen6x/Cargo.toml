@@ -9,6 +9,7 @@ documentation = "https://docs.rs/sen6x"
 repository = "https://github.com/finomen/sen6x-rs"
 keywords = ["airquality", "sen6x", "sensirion", "sensor"]
 categories = ["embedded", "no-std"]
+readme = "../README.md"
 
 [features]
 default = []
