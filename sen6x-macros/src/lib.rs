@@ -264,7 +264,7 @@ pub fn sen_cmd(input: TokenStream) -> TokenStream {
                         quote! { [#( crate::connection::State::#send_allowed_modes ),*] };
                     let command_id = &v.ident;
                     let name = Ident::new(
-                        &*snake_case(c_ident.to_string().as_str()),
+                        &snake_case(c_ident.to_string().as_str()),
                         Span::call_site(),
                     );
 
@@ -322,7 +322,7 @@ pub fn sen_cmd(input: TokenStream) -> TokenStream {
                         quote! { [#( crate::connection::State::#rx_allowed_modes ),*] };
                     let command_id = &v.ident;
                     let name = Ident::new(
-                        &*snake_case(c_ident.to_string().as_str()),
+                        &snake_case(c_ident.to_string().as_str()),
                         Span::call_site(),
                     );
 

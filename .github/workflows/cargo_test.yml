@@ -26,6 +26,20 @@ jobs:
       - name: Check formatting
         run: cargo fmt --all -- --check
 
+  clippy:
+    name: Clippy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install clippy
+        run: rustup component add clippy
+      - name: Cache build dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          key: clippy
+      - name: Run clippy
+        run: cargo clippy --all-targets --features embedded-hal,embedded-hal-async,embassy -- -D warnings
+
   test:
     runs-on: ubuntu-latest
     strategy:
