@@ -1,0 +1,54 @@
+name: Conventional Commits
+
+on:
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    name: Conventional Commits
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: webiny/action-conventional-commits@v1.4.2
+        with:
+          allowed-commit-types: "feat,fix,docs,chore,ops,test,style,build,refactor"
+About
+Ensures that all commits are following the conventional-commits standard.
+
+Resources
+ Readme
+Contributing
+ Contributing
+ Activity
+ Custom properties
+Stars
+ 75 stars
+Watchers
+ 0 watching
+Forks
+ 33 forks
+Report repository
+Releases 1
+First release
+Latest
+on May 20, 2025
+Packages
+No packages published
+Contributors
+8
+@adrians5j
+@yzwijsen
+@dkhunt27
+@kesselb
+@Pavel910
+@damianopetrungaro
+@bilalshaikh42
+@wu-cl
+Languages
+TypeScript
+86.9%
+ 
+JavaScript
+13.1%
