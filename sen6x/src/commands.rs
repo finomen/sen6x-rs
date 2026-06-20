@@ -171,11 +171,12 @@ pub(crate) enum CommandId {
     ShtHeaterMeasurements = 0x6790,
 
     /// Gets the parameters to customize the VOC algorithm. For more information on what the
-    /// parameters below do, refer to Sensirion’s VOC Index for Indoor Air Applications [4].
+    /// parameters below do, refer to Sensirion’s
+    /// [VOC Index for Indoor Air Applications](https://sensirion.com/media/documents/02232963/6294E043/Info_Note_VOC_Index.pdf).
     #[read(allowed_in = [Idle], rx = VocAlgorithmTuningParameters)]
     ///  Sets the parameters to customize the VOC algorithm. It has no effect if at least one parameter is
-    /// outside the specified range. For more information on what the parameters below do, refer to Sensirion’s VOC
-    /// Index for Indoor Air Applications [4].
+    /// outside the specified range. For more information on what the parameters below do, refer to Sensirion’s
+    /// [VOC Index for Indoor Air Applications](https://sensirion.com/media/documents/02232963/6294E043/Info_Note_VOC_Index.pdf).
     #[write(allowed_in = [Idle], tx = VocAlgorithmTuningParameters)]
     #[execution_time(20)]
     #[target(Sen65)]
@@ -205,12 +206,13 @@ pub(crate) enum CommandId {
     VocAlgorithmState = 0x6181,
 
     /// Gets the parameters to customize the NOx algorithm. For more information on what the
-    /// parameters below do, refer to Sensirion’s NOx Index for Indoor Air Applications [5].
+    /// parameters below do, refer to Sensirion’s
+    /// [NOx Index for Indoor Air Applications](https://sensirion.com/media/documents/9F289B95/6294DFFC/Info_Note_NOx_Index.pdf).
     #[read(allowed_in = [Idle], rx = NoxAlgorithmTuningParameters)]
     /// Sets the parameters to customize the NOx algorithm. It has no effect if at least one parameter is
     /// outside the specified range. To check whether the parameters have been set successfully, use the Get NOx
     /// Algorithm Tuning Parameters command. For more information on what the parameters below do, refer to
-    /// Sensirion’s NOx Index for Indoor Air Applications [5].
+    /// Sensirion’s [NOx Index for Indoor Air Applications](https://sensirion.com/media/documents/9F289B95/6294DFFC/Info_Note_NOx_Index.pdf).
     #[write(allowed_in = [Idle], tx = NoxAlgorithmTuningParameters)]
     #[execution_time(20)]
     #[target(Sen65)]
@@ -240,7 +242,7 @@ pub(crate) enum CommandId {
     // FIXME: availability depend on Version
     /// This command resets all CO2 sensor configuration settings stored in the EEPROM and erases the
     /// forced recalibration (FRC) and automatic self-calibration (ASC) algorithm history of the CO2 sensor, restarting
-    /// the bypass phase. Refer to the datasheet of the STCC4 for more information [6].
+    /// the bypass phase. Refer to the [STCC4 datasheet](https://sensirion.com/resource/datasheet/STCC4) for more information.
     #[execution_time(1400)]
     #[send(allowed_in = [Idle])]
     #[target(Sen63c)]

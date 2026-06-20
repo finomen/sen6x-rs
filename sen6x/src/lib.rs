@@ -41,6 +41,13 @@ use crate::types::Milliseconds;
 #[cfg(feature = "embassy")]
 use embassy_sync::mutex::Mutex;
 
+/// Driver for a Sensirion SEN6x air-quality sensor over I²C.
+///
+/// Construct one with [`Sen6x::new`], then drive it through the model-specific
+/// command trait for your sensor (e.g. [`Sen66Commands`] / [`Sen66CommandsAsync`]).
+/// The driver tracks whether the sensor is idle or measuring and rejects commands
+/// that are not valid in the current state (see the crate-level `# Errors` docs).
+///
 /// # Thread safety
 /// `Sen6x` uses [`core::cell::RefCell`] for interior mutability, so it is
 /// [`Send`] but not [`Sync`]. The driver is intended to be owned by a single
@@ -156,6 +163,31 @@ where
 }
 
 impl<'a, C, D> Sen6x<'a, C, D> {
+    /// Creates a driver from an I²C bus and a delay provider.
+    ///
+    /// `i2c` is either an exclusive `&mut` to an [`embedded_hal::i2c::I2c`] /
+    /// [`embedded_hal_async::i2c::I2c`] implementation, or — with the `embassy`
+    /// feature — a shared `&embassy_sync::mutex::Mutex<_, I2C>` for buses shared
+    /// with other drivers. `delay` provides the post-command wait each operation
+    /// needs. The sensor starts in the idle state.
+    ///
+    /// # Example
+    ///
+    #[cfg_attr(feature = "embedded-hal", doc = "```")]
+    #[cfg_attr(feature = "embedded-hal", doc = "use embedded_hal_mock::eh1::i2c::{Mock as I2cMock, Transaction};")]
+    #[cfg_attr(feature = "embedded-hal", doc = "use embedded_hal_mock::eh1::delay::NoopDelay;")]
+    #[cfg_attr(feature = "embedded-hal", doc = "use sen6x::{Sen6x, Sen66Commands};")]
+    #[cfg_attr(feature = "embedded-hal", doc = "")]
+    #[cfg_attr(feature = "embedded-hal", doc = "// The SEN6x lives at I²C address 0x6B; starting a measurement writes command 0x0021.")]
+    #[cfg_attr(feature = "embedded-hal", doc = "let mut i2c = I2cMock::new(&[Transaction::write(0x6B, vec![0x00, 0x21])]);")]
+    #[cfg_attr(feature = "embedded-hal", doc = "let mut delay = NoopDelay::new();")]
+    #[cfg_attr(feature = "embedded-hal", doc = "")]
+    #[cfg_attr(feature = "embedded-hal", doc = "let mut sensor = Sen6x::new(&mut i2c, &mut delay);")]
+    #[cfg_attr(feature = "embedded-hal", doc = "sensor.start_continuous_measurement()?;")]
+    #[cfg_attr(feature = "embedded-hal", doc = "")]
+    #[cfg_attr(feature = "embedded-hal", doc = "i2c.done(); // all expected I²C traffic happened")]
+    #[cfg_attr(feature = "embedded-hal", doc = "# Ok::<(), sen6x::Error<embedded_hal::i2c::ErrorKind>>(())")]
+    #[cfg_attr(feature = "embedded-hal", doc = "```")]
     pub fn new<I2C>(i2c: I2C, delay: &'a mut D) -> Self
     where
         I2C: IntoI2cConnection<'a, Connection = C>,
