@@ -68,3 +68,19 @@ jobs:
         with:
           files: lcov.info
           token: ${{ secrets.CODECOV_TOKEN }}
+
+  example:
+    name: Build example (esp32-embassy)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install rust-src
+        run: rustup component add rust-src
+      - name: Cache build dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          key: example-esp32-embassy
+          workspaces: examples/esp32-embassy
+      - name: Build example
+        working-directory: examples/esp32-embassy
+        run: cargo build --verbose
