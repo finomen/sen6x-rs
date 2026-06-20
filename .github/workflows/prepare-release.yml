@@ -1,0 +1,90 @@
+name: Prepare Release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Get current version
+        id: current_version
+        run: |
+          VERSION=$(grep '^version' sen6x/Cargo.toml | head -1 | sed 's/version = "\(.*\)"/\1/')
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Generate commit diff since last tag
+        run: |
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -z "$LAST_TAG" ]; then
+            git log --format="%s" > commit_messages.txt
+          else
+            git log "${LAST_TAG}..HEAD" --format="%s" > commit_messages.txt
+          fi
+
+      - name: Generate new version
+        id: semver
+        uses: juztcode/generate-semver@1.0.0
+        with:
+          branch-diff-file: commit_messages.txt
+          previous-version: ${{ steps.current_version.outputs.version }}
+
+      - name: Create release branch
+        run: git checkout -b release_${{ steps.semver.outputs.generated-version }}
+
+      - name: Update versions in Cargo.toml files
+        env:
+          NEW_VERSION: ${{ steps.semver.outputs.generated-version }}
+        run: |
+          # Package version in sen6x/Cargo.toml (first occurrence only)
+          sed -i "0,/^version = /s/^version = \"[^\"]*\"/version = \"$NEW_VERSION\"/" sen6x/Cargo.toml
+          # Package version in sen6x-macros/Cargo.toml
+          sed -i "0,/^version = /s/^version = \"[^\"]*\"/version = \"$NEW_VERSION\"/" sen6x-macros/Cargo.toml
+          # sen6x-macros dependency version inside sen6x/Cargo.toml
+          sed -i "s/sen6x-macros = { version = \"[^\"]*\"/sen6x-macros = { version = \"$NEW_VERSION\"/" sen6x/Cargo.toml
+
+      - name: Commit version bump
+        env:
+          NEW_VERSION: ${{ steps.semver.outputs.generated-version }}
+        run: |
+          git add sen6x/Cargo.toml sen6x-macros/Cargo.toml
+          git commit -m "chore: bump version to $NEW_VERSION"
+
+      - name: Push release branch
+        run: git push origin release_${{ steps.semver.outputs.generated-version }}
+
+      - name: Generate changelog
+        uses: smichard/conventional_changelog@2.0.0
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create pull request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NEW_VERSION: ${{ steps.semver.outputs.generated-version }}
+        run: |
+          gh pr create \
+            --title "Release $NEW_VERSION" \
+            --body "Automated release PR for version $NEW_VERSION" \
+            --base master \
+            --head "release_$NEW_VERSION"
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache build dependencies
+        uses: Swatinem/rust-cache@v2

@@ -1,0 +1,50 @@
+name: Create Pre-Release on PR Approval
+
+on:
+  pull_request_review:
+    types: [submitted]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  pre-release:
+    # Only run when a release_* PR is approved; gh release create will
+    # fail naturally if the tag already exists, preventing duplicates.
+    if: >-
+      github.event.review.state == 'approved' &&
+      startsWith(github.event.pull_request.head.ref, 'release_')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract version from branch name
+        id: version
+        env:
+          BRANCH: ${{ github.event.pull_request.head.ref }}
+        run: echo "version=${BRANCH#release_}" >> "$GITHUB_OUTPUT"
+
+      - name: Create pre-release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.version.outputs.version }}
+          BRANCH: ${{ github.event.pull_request.head.ref }}
+        run: |
+          gh release create "v$VERSION" \
+            --prerelease \
+            --title "v$VERSION" \
+            --generate-notes \
+            --target "$BRANCH"
+
+      - name: Merge pull request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr merge ${{ github.event.pull_request.number }} \
+            --merge \
+            --delete-branch
