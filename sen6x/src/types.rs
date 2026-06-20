@@ -4,7 +4,7 @@ use bitrs::layout;
 use fixed_str::FixedStr;
 use sen6x_macros::SenRead;
 
-pub type Milliseconds = u16;
+pub(crate) type Milliseconds = u16;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct MicrogramsPerCubicMeter {

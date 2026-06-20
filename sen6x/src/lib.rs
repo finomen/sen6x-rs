@@ -17,8 +17,6 @@ mod embeded_hal_async;
 mod io;
 pub mod types;
 
-pub use sen6x_macros::SenRead;
-
 use crate::connection::State;
 use crate::io::ToBytes;
 use crate::types::Milliseconds;
@@ -94,6 +92,18 @@ where
         self.delay.borrow_mut().delay_ms(delay as u32).await;
     }
 }
+
+mod sealed {
+    pub trait Sealed {}
+    #[cfg(any(feature = "embedded-hal", feature = "embedded-hal-async"))]
+    impl<I2C> Sealed for &mut I2C {}
+    #[cfg(feature = "embassy")]
+    impl<M, I2C> Sealed for &embassy_sync::mutex::Mutex<M, I2C> where M: embassy_sync::blocking_mutex::raw::RawMutex {}
+}
+
+/// Conversion of an I²C bus handle into the connection type stored by [`Sen6x`].
+/// This is an implementation detail of [`Sen6x::new`]
+#[doc(hidden)]
 pub trait IntoI2cConnection<'a> {
     type Connection;
     fn into_i2c_connection(self) -> Self::Connection;
