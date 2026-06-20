@@ -119,6 +119,18 @@ pub struct Ppm {
     value: i16,
 }
 
+impl Ppm {
+    /// Creates a concentration of `value` ppm.
+    ///
+    /// ```
+    /// use sen6x::types::Ppm;
+    /// assert_eq!(f32::from(Ppm::new(1013)), 1013.0);
+    /// ```
+    pub fn new(value: i16) -> Self {
+        Ppm { value }
+    }
+}
+
 /// Converts to ppm (the raw register value, unscaled).
 impl From<Ppm> for f32 {
     fn from(value: Ppm) -> f32 {
@@ -263,6 +275,18 @@ impl ValueWrapper for Hpa {
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Meters {
     value: u16,
+}
+
+impl Meters {
+    /// Creates a `value` meters.
+    ///
+    /// ```
+    /// use sen6x::types::Meters;
+    /// assert_eq!(f32::from(Meters::new(2000)), 2000.0);
+    /// ```
+    pub fn new(value: u16) -> Self {
+        Meters { value }
+    }
 }
 
 /// Converts to metres (the raw value, unscaled).

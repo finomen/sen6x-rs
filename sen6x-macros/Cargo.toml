@@ -6,6 +6,7 @@ authors = ["Nikolai Filchenko <finomen812@gmail.com>"]
 license = "MIT"
 description = "Procedural macros for the sen6x-rs driver"
 repository = "https://github.com/finomen/sen6x-rs"
+rust-version = "1.85"
 
 [lib]
 proc-macro = true
