@@ -456,7 +456,7 @@ pub struct MeasuredValuesSen69c {
 /// A field is `None` when that value is unavailable.
 #[derive(SenRead, Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-pub struct RawValuesSen62_3c {
+pub struct RawValuesSen62Sen63c {
     /// Ambient Humidity
     pub ambient_humidity: Option<Percent>,
     /// Ambient Temperature
@@ -468,7 +468,7 @@ pub struct RawValuesSen62_3c {
 /// A field is `None` when that value is unavailable.
 #[derive(SenRead, Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-pub struct RawValuesSen65_8_9c {
+pub struct RawValuesSen65Sen68Sen69c {
     /// Ambient Humidity
     pub ambient_humidity: Option<Percent>,
     /// Ambient Temperature

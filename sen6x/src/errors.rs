@@ -1,16 +1,16 @@
 /// SEN6x errors
 #[derive(Debug, Clone, PartialEq, thiserror_no_std::Error)]
 pub enum Error<E> {
-    #[error("I2C: {0}")]
     /// I²C bus error
+    #[error("I2C: {0}")]
     I2c(E),
-    #[error("CRC")]
     /// CRC checksum validation failed
+    #[error("CRC")]
     Crc,
-    #[error("Not Allowed")]
     /// Not allowed in current state
+    #[error("Not Allowed")]
     NotAllowed,
-    #[error("Invalid value")]
     /// Invalid value
+    #[error("Invalid value")]
     InvalidValue,
 }

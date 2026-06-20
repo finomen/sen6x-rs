@@ -72,21 +72,21 @@ pub(crate) enum CommandId {
     /// data is available since the last read operation. If no new data is available, the previous values will be returned.
     /// If no data is available at all (e.g. measurement not running for at least one second), all values will be None
     #[execution_time(20)]
-    #[read(allowed_in = [Measurement], rx = RawValuesSen62_3c)]
+    #[read(allowed_in = [Measurement], rx = RawValuesSen62Sen63c)]
     #[target(Sen62)]
     #[target(Sen63c)]
     #[alias(RawValues)]
-    RawValuesSen62_3c = 0x0492,
+    RawValuesSen62Sen63c = 0x0492,
     /// Returns the measured raw values. The command data_ready can be used to check if new
     /// data is available since the last read operation. If no new data is available, the previous values will be returned.
     /// If no data is available at all (e.g. measurement not running for at least one second), all values will be None
     #[execution_time(20)]
-    #[read(allowed_in = [Measurement], rx = RawValuesSen65_8_9c)]
+    #[read(allowed_in = [Measurement], rx = RawValuesSen65Sen68Sen69c)]
     #[target(Sen65)]
     #[target(Sen68)]
     #[target(Sen69c)]
     #[alias(RawValues)]
-    RawValuesSen65_8_9c = 0x0455,
+    RawValuesSen65Sen68Sen69c = 0x0455,
     /// Returns the measured raw values. The command data_ready can be used to check if new
     /// data is available since the last read operation. If no new data is available, the previous values will be returned.
     /// If no data is available at all (e.g. measurement not running for at least one second), all values will be None
