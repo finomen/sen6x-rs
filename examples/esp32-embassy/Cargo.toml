@@ -32,7 +32,7 @@ esp-metadata-generated = { version = "0.4.0", features = ["esp32c5"] }
 embedded-hal-async = "1.0.0"
 embedded-hal = "1.0.0"
 
-sen6x = { path = "../../sen6x", features = ["embassy"]}
+sen6x-driver = { path = "../../sen6x-driver", features = ["embassy"]}
 
 fixed_str = { version = "0.9.1", default-features = false }
 embassy-futures = "0.1.2"

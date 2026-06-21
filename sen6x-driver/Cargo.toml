@@ -1,16 +1,19 @@
 [package]
-name = "sen6x"
+name = "sen6x-driver"
 version = "0.0.2"
 edition = "2024"
 authors = ["Nikolai Filchenko <finomen812@gmail.com>"]
 license = "MIT"
 description = "embedded-hal driver for the sensirion sen6x sensors"
-documentation = "https://docs.rs/sen6x"
+documentation = "https://docs.rs/sen6x-driver"
 repository = "https://github.com/finomen/sen6x-rs"
 keywords = ["airquality", "sen6x", "sensirion", "sensor"]
 categories = ["embedded", "no-std"]
 readme = "../README.md"
 rust-version = "1.85"
+
+[lib]
+name = "sen6x"
 
 [features]
 default = []
