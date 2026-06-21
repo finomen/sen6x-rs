@@ -85,6 +85,9 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Fix git permissions after Docker action
+        run: sudo chown -R "$(id -u):$(id -g)" .git
+
       - name: Commit changelog to release branch
         run: |
           git fetch origin release_${{ env.NEW_VERSION }}
