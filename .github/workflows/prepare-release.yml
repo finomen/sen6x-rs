@@ -20,7 +20,7 @@ jobs:
       - name: Get current version
         id: current_version
         run: |
-          VERSION=$(grep '^version' sen6x/Cargo.toml | head -1 | sed 's/version = "\(.*\)"/\1/')
+          VERSION=$(grep '^version' sen6x-driver/Cargo.toml | head -1 | sed 's/version = "\(.*\)"/\1/')
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Generate commit diff since last tag
@@ -68,13 +68,13 @@ jobs:
 
       - name: Update versions in Cargo.toml files
         run: |
-          sed -i "0,/^version = /s/^version = \"[^\"]*\"/version = \"$NEW_VERSION\"/" sen6x/Cargo.toml
+          sed -i "0,/^version = /s/^version = \"[^\"]*\"/version = \"$NEW_VERSION\"/" sen6x-driver/Cargo.toml
           sed -i "0,/^version = /s/^version = \"[^\"]*\"/version = \"$NEW_VERSION\"/" sen6x-macros/Cargo.toml
-          sed -i "s/sen6x-macros = { version = \"[^\"]*\"/sen6x-macros = { version = \"$NEW_VERSION\"/" sen6x/Cargo.toml
+          sed -i "s/sen6x-macros = { version = \"[^\"]*\"/sen6x-macros = { version = \"$NEW_VERSION\"/" sen6x-driver/Cargo.toml
 
       - name: Commit version bump
         run: |
-          git add sen6x/Cargo.toml sen6x-macros/Cargo.toml
+          git add sen6x-driver/Cargo.toml sen6x-macros/Cargo.toml
           git commit -m "chore: bump version to $NEW_VERSION"
 
       - name: Push release branch

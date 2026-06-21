@@ -5,6 +5,13 @@ This driver was built using [embedded-hal](https://docs.rs/embedded-hal/) traits
 
 This driver is compatible with `embedded-hal v1.0`.
 
+## Reasons for yet another driver
+
+There are several other implementation, but they lack one or more features I needed:
+- support for different sensors from Sen6x family
+- support for shared I2C bus in asynchronous implementation
+- support for calibration/compensation commands
+
 ## Features
 
 - **`embedded-hal`** - Enables async I2C support via `embedded-hal`.
@@ -13,7 +20,7 @@ This driver is compatible with `embedded-hal v1.0`.
 
 ```toml
 [dependencies]
-sen6x = { version = "0.0.1", features = ["embassy"] }
+sen6x-driver = { version = "0.0.2", features = ["embassy"] }
 ```
 
 ## Sensirion SEN6x
