@@ -8,113 +8,67 @@ permissions:
   pull-requests: write
 
 jobs:
-  calculate-version:
-    runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.version.outputs.version }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Get semantic version
-        id: version
-        uses: paulhatch/semantic-version@v5.4.0
-        with:
-          tag_prefix: "v"
-          major_pattern: "BREAKING CHANGE|!:"
-          minor_pattern: "^feat"
-          version_format: "${major}.${minor}.${patch}"
-          bump_each_commit: false
-          search_commit_body: true
-
   prepare:
-    needs: calculate-version
     runs-on: ubuntu-latest
-    env:
-      NEW_VERSION: ${{ needs.calculate-version.outputs.version }}
     steps:
       - uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Configure git
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Generate changelog section
-        env:
-          REPO: ${{ github.repository }}
-        run: |
-          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-          RANGE="${LAST_TAG:+${LAST_TAG}..}HEAD"
-          DATE=$(date +%Y-%m-%d)
-
-          collect() {
-            local type="$1"
-            git log "$RANGE" --format="%s%x1e%H" \
-              | while IFS=$'\x1e' read -r subject hash; do
-                  [[ "$subject" =~ ^${type}[^a-zA-Z] ]] || continue
-                  short="${hash:0:7}"
-                  msg=$(sed -E 's/^[^:]+: //' <<< "$subject")
-                  printf '* %s ([%s](https://github.com/%s/commit/%s))\n' \
-                    "$msg" "$short" "$REPO" "$hash"
-                done
-          }
-
-          {
-            printf '## [%s] - %s\n\n' "$NEW_VERSION" "$DATE"
-
-            feats=$(collect feat)
-            fixes=$(collect fix)
-            docs=$(collect docs)
-            perfs=$(collect perf)
-            refact=$(collect refactor)
-
-            if [ -n "$feats" ];  then printf '### Features\n\n%s\n\n' "$feats";     fi
-            if [ -n "$fixes" ];  then printf '### Bug Fixes\n\n%s\n\n' "$fixes";   fi
-            if [ -n "$docs" ];   then printf '### Documentation\n\n%s\n\n' "$docs"; fi
-            if [ -n "$perfs" ];  then printf '### Performance\n\n%s\n\n' "$perfs";  fi
-            if [ -n "$refact" ]; then printf '### Refactoring\n\n%s\n\n' "$refact"; fi
-          } > new_section.md
+      - name: Generate changelog
+        id: changelog
+        uses: TriPSs/conventional-changelog-action@v5
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          output-file: CHANGELOG.md
+          tag-prefix: 'v'
+          preset: conventionalcommits
+          release-count: 0
+          skip-version-file: true
+          skip-commit: true
+          skip-tag: true
+          git-push: false
 
       - name: Create release branch
-        run: git checkout -b release_${{ env.NEW_VERSION }}
+        env:
+          NEW_VERSION: ${{ steps.changelog.outputs.version }}
+        run: git checkout -b release_$NEW_VERSION
 
       - name: Update versions in Cargo.toml files
+        env:
+          NEW_VERSION: ${{ steps.changelog.outputs.version }}
         run: |
           sed -i "0,/^version = /s/^version = \"[^\"]*\"/version = \"$NEW_VERSION\"/" sen6x-driver/Cargo.toml
           sed -i "0,/^version = /s/^version = \"[^\"]*\"/version = \"$NEW_VERSION\"/" sen6x-macros/Cargo.toml
           sed -i "s/sen6x-macros = { version = \"[^\"]*\"/sen6x-macros = { version = \"$NEW_VERSION\"/" sen6x-driver/Cargo.toml
 
-      - name: Update CHANGELOG.md
-        run: |
-          OLD_SECTIONS=$(git show origin/master:CHANGELOG.md 2>/dev/null \
-            | awk '/^## /{found=1} found' || true)
-
-          if [ -z "$OLD_SECTIONS" ]; then
-            printf '# Changelog\n\n%s\n' "$(cat new_section.md)" > CHANGELOG.md
-          else
-            printf '# Changelog\n\n%s\n\n%s\n' "$(cat new_section.md)" "$OLD_SECTIONS" > CHANGELOG.md
-          fi
-
       - name: Commit release changes
+        env:
+          NEW_VERSION: ${{ steps.changelog.outputs.version }}
         run: |
           git add sen6x-driver/Cargo.toml sen6x-macros/Cargo.toml CHANGELOG.md
           git commit -m "chore: bump version to $NEW_VERSION"
 
       - name: Push release branch
-        run: git push origin release_${{ env.NEW_VERSION }}
+        env:
+          NEW_VERSION: ${{ steps.changelog.outputs.version }}
+        run: git push origin release_$NEW_VERSION
 
       - name: Create pull request
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NEW_VERSION: ${{ steps.changelog.outputs.version }}
         run: |
+          awk '/^## /{count++; if(count==2) exit} count==1' CHANGELOG.md > pr_body.md
           gh pr create \
             --title "chore(release): $NEW_VERSION" \
-            --body-file new_section.md \
+            --body-file pr_body.md \
             --base master \
             --head "release_$NEW_VERSION"
 
