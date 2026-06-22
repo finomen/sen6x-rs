@@ -1,6 +1,9 @@
 'use strict'
 
-module.exports = require('conventional-changelog-conventionalcommits')({
+const pkg = require('conventional-changelog-conventionalcommits')
+const factory = typeof pkg === 'function' ? pkg : pkg.default
+
+module.exports = factory({
   types: [
     { type: 'feat',     section: 'Features' },
     { type: 'fix',      section: 'Bug Fixes' },

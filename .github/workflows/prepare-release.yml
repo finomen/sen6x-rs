@@ -23,7 +23,7 @@ jobs:
 
       - name: Install changelog preset
         run: |
-          npm install --prefix /tmp/clog conventional-changelog-conventionalcommits
+          npm install --prefix /tmp/clog conventional-changelog-conventionalcommits@6
           echo "NODE_PATH=/tmp/clog/node_modules" >> "$GITHUB_ENV"
 
       - name: Generate changelog
