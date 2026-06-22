@@ -17,7 +17,6 @@
 //! Commands that read a response may return any of the four variants. Commands
 //! that only send (with no response) return [`Error::NotAllowed`] or [`Error::I2c`].
 //! Each command method also documents its own `# Errors` section.
-#![cfg_attr(docsrs, feature(doc_auto_cfg))]
 #![cfg_attr(not(test), no_std)]
 
 pub mod commands;
