@@ -78,8 +78,3 @@ jobs:
             --base master \
             --head "release_$NEW_VERSION"
 
-      - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Cache build dependencies
-        uses: Swatinem/rust-cache@v2

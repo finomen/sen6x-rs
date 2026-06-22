@@ -34,7 +34,7 @@ jobs:
           BRANCH: ${{ github.event.pull_request.head.ref }}
           PR_BODY: ${{ github.event.pull_request.body }}
         run: |
-          printf '%s' "$PR_BODY" > release_notes.md
+          printf '%s' "$PR_BODY" | awk 'NR==1 && /^## /{next} NF||found{found=1; print}' > release_notes.md
           gh release create "v$VERSION" \
             --prerelease \
             --title "v$VERSION" \
