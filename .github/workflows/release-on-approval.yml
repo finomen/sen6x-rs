@@ -19,8 +19,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.ref }}
-          fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract version from branch name
@@ -34,21 +32,19 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION: ${{ steps.version.outputs.version }}
           BRANCH: ${{ github.event.pull_request.head.ref }}
+          PR_BODY: ${{ github.event.pull_request.body }}
         run: |
+          printf '%s' "$PR_BODY" > release_notes.md
           gh release create "v$VERSION" \
             --prerelease \
             --title "v$VERSION" \
-            --generate-notes \
+            --notes-file release_notes.md \
             --target "$BRANCH"
 
       - name: Merge pull request
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_TITLE: ${{ github.event.pull_request.title }}
-          PR_BODY: ${{ github.event.pull_request.body }}
         run: |
           gh pr merge ${{ github.event.pull_request.number }} \
-            --squash \
-            --subject "$PR_TITLE" \
-            --body "$PR_BODY" \
+            --merge \
             --delete-branch
