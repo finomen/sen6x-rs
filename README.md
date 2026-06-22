@@ -5,6 +5,9 @@ This driver was built using [embedded-hal](https://docs.rs/embedded-hal/) traits
 
 This driver is compatible with `embedded-hal v1.0`.
 
+[![Crates.io](https://img.shields.io/crates/v/sen6x-driver.svg)](https://crates.io/crates/sen6x-driver)
+[![Docs.rs](https://docs.rs/sen6x-driver/badge.svg)](https://docs.rs/sen6x-driver)
+
 ## Reasons for yet another driver
 
 There are several other implementation, but they lack one or more features I needed:
@@ -28,7 +31,7 @@ sen6x-driver = { version = "0.0.2", features = ["embassy"] }
 The SEN6x sensor module family is an air quality platform that combines critical parameters such as particulate
 matter, relative humidity, temperature, VOC, NOx and either CO2 or formaldehyde, all in one compact package.
 
-![img.png](img/sen6x.png)
+![sen6x](https://github.com/finomen/sen6x-rs/raw/master/img/sen6x.png)
 
 Further information: [Datasheet SEN6x](https://sensirion.com/media/documents/FAFC548D/693FBB15/PS_DS_SEN6x.pdf)
 
