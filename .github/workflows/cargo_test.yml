@@ -89,15 +89,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@nightly
       - name: Cache build dependencies
         uses: Swatinem/rust-cache@v2
         with:
           key: publish-dry-run
-      - name: Package check
-        run: |
-          cargo package --no-verify --package sen6x-macros
-          cargo package --no-verify --package sen6x-driver
+      - name: Publish check
+        run: cargo publish -Zpackage-workspace --workspace --dry-run --allow-dirty
 
   example:
     name: Build example (esp32-embassy)
