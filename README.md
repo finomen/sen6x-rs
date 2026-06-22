@@ -23,7 +23,7 @@ There are several other implementation, but they lack one or more features I nee
 
 ```toml
 [dependencies]
-sen6x-driver = { version = "0.0.2", features = ["embassy"] }
+sen6x-driver = { version = "0.0.3", features = ["embassy"] }
 ```
 
 ## Sensirion SEN6x
