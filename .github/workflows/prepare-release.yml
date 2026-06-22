@@ -73,11 +73,11 @@ jobs:
             perfs=$(collect perf)
             refact=$(collect refactor)
 
-            [ -n "$feats" ]  && printf '### Features\n\n%s\n\n' "$feats"
-            [ -n "$fixes" ]  && printf '### Bug Fixes\n\n%s\n\n' "$fixes"
-            [ -n "$docs" ]   && printf '### Documentation\n\n%s\n\n' "$docs"
-            [ -n "$perfs" ]  && printf '### Performance\n\n%s\n\n' "$perfs"
-            [ -n "$refact" ] && printf '### Refactoring\n\n%s\n\n' "$refact"
+            if [ -n "$feats" ];  then printf '### Features\n\n%s\n\n' "$feats";     fi
+            if [ -n "$fixes" ];  then printf '### Bug Fixes\n\n%s\n\n' "$fixes";   fi
+            if [ -n "$docs" ];   then printf '### Documentation\n\n%s\n\n' "$docs"; fi
+            if [ -n "$perfs" ];  then printf '### Performance\n\n%s\n\n' "$perfs";  fi
+            if [ -n "$refact" ]; then printf '### Refactoring\n\n%s\n\n' "$refact"; fi
           } > new_section.md
 
       - name: Create release branch
