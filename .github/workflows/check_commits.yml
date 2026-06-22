@@ -1,16 +1,16 @@
-name: PR Conventional Commit Validation
+name: Conventional Commits
 
 on:
   pull_request:
     branches: [ master ]
-    types: [opened, synchronize, reopened, edited]
 
 jobs:
-  validate-pr-title:
+  build:
+    name: Conventional Commits
     runs-on: ubuntu-latest
     steps:
-      - name: PR Conventional Commit Validation
-        uses:  ytanikin/pr-conventional-commits@1.4.0
+      - uses: actions/checkout@v3
+
+      - uses: webiny/action-conventional-commits@v1.4.2
         with:
-          task_types: '["feat","fix","docs","test","ci","refactor","perf","chore","revert"]'
-          add_label: 'false'
+          allowed-commit-types: "feat,fix,docs,chore,ci,ops,test,style,build,refactor"
