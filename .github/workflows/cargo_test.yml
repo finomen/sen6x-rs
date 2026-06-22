@@ -94,10 +94,10 @@ jobs:
         uses: Swatinem/rust-cache@v2
         with:
           key: publish-dry-run
-      - name: Dry-run publish
-        uses: katyo/publish-crates@v2
-        with:
-          dry-run: true
+      - name: Package check
+        run: |
+          cargo package --no-verify --package sen6x-macros
+          cargo package --no-verify --package sen6x-driver
 
   example:
     name: Build example (esp32-embassy)
