@@ -44,7 +44,7 @@ This project was created with the assistance of Claude and Gemini. Primarily, Ge
 
 ## License
 
-Licensed under [MIT license](LICENSE)
+Licensed under [MIT license](https://github.com/finomen/sen6x-rs/blob/master/LICENSE)
 
 ### Contributing
 
