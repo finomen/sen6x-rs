@@ -21,6 +21,11 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
+      - name: Install changelog preset
+        run: |
+          npm install --prefix /tmp/clog conventional-changelog-conventionalcommits
+          echo "NODE_PATH=/tmp/clog/node_modules" >> "$GITHUB_ENV"
+
       - name: Generate changelog
         id: changelog
         uses: TriPSs/conventional-changelog-action@v5
@@ -28,14 +33,13 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           output-file: CHANGELOG.md
           tag-prefix: 'v'
-          preset: conventionalcommits
           release-count: 0
           skip-version-file: true
           skip-commit: true
           skip-tag: true
           git-push: false
           skip-on-empty: false
-          config-file-path: .versionrc.json
+          config-file-path: .changelog.js
 
       - name: Create release branch
         env:
