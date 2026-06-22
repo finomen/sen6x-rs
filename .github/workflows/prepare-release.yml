@@ -34,6 +34,8 @@ jobs:
           skip-commit: true
           skip-tag: true
           git-push: false
+          skip-on-empty: false
+          config-file-path: .versionrc.json
 
       - name: Create release branch
         env:
