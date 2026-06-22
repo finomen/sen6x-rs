@@ -83,6 +83,47 @@ jobs:
           files: lcov.info
           token: ${{ secrets.CODECOV_TOKEN }}
 
+  doctest:
+    name: Doc tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Cache build dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          key: doctest
+      - name: Run doc tests
+        run: |
+          set -o pipefail
+          cargo test --doc --features embedded-hal,embedded-hal-async,embassy,serde 2>&1 | tee doctest_results.txt
+      - name: Convert results to JUnit
+        if: success() || failure()
+        run: |
+          python3 << 'EOF' > doctest_results.xml
+          import re
+          tests = []
+          with open('doctest_results.txt') as f:
+              for line in f:
+                  m = re.match(r'^test (.+) \.\.\. (ok|FAILED|ignored)', line.rstrip())
+                  if m:
+                      tests.append((m.group(1), m.group(2)))
+          failed = sum(1 for _, r in tests if r == 'FAILED')
+          print('<?xml version="1.0"?>')
+          print(f'<testsuites><testsuite name="doctests" tests="{len(tests)}" failures="{failed}">')
+          for name, result in tests:
+              n = name.replace('&', '&amp;').replace('"', '&quot;').replace('<', '&lt;')
+              tag = '<failure/>' if result == 'FAILED' else '<skipped/>' if result == 'ignored' else ''
+              print(f'  <testcase name="{n}">{tag}</testcase>')
+          print('</testsuite></testsuites>')
+          EOF
+      - name: Publish doc test results
+        uses: dorny/test-reporter@v1
+        if: success() || failure()
+        with:
+          name: Doc tests
+          path: doctest_results.xml
+          reporter: java-junit
+
   publish-dry-run:
     name: Publish dry-run
     runs-on: ubuntu-latest
