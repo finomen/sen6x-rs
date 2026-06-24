@@ -5,84 +5,16 @@ use fixed_str::FixedStr;
 use sen6x_macros::SenRead;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
+use units::Rational;
+use units::quantity::QuantityInfo;
 
 pub(crate) type Milliseconds = u16;
 
 /// A particulate-matter mass concentration, in micrograms per cubic metre (µg/m³).
-///
-/// Obtain the physical value with `f32::from` (or `.into()`).
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-pub struct MicrogramsPerCubicMeter {
-    value: u16,
-}
-/// Converts to µg/m³ (the raw register value divided by 10).
-impl From<MicrogramsPerCubicMeter> for f32 {
-    fn from(value: MicrogramsPerCubicMeter) -> f32 {
-        value.value as f32 / 10f32
-    }
-}
-
-impl ValueWrapper for MicrogramsPerCubicMeter {
-    type Inner = u16;
-    fn wrap(value: u16) -> Self {
-        MicrogramsPerCubicMeter { value }
-    }
-    fn unwrap(&self) -> Self::Inner {
-        self.value
-    }
-}
-
-/// A relative humidity, in percent (%RH).
-///
-/// Obtain the physical value with `f32::from` (or `.into()`).
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-pub struct Percent {
-    value: i16,
-}
-
-/// Converts to percent (the raw register value divided by 100).
-impl From<Percent> for f32 {
-    fn from(value: Percent) -> f32 {
-        value.value as f32 / 100f32
-    }
-}
-
-impl ValueWrapper for Percent {
-    type Inner = i16;
-    fn wrap(value: i16) -> Self {
-        Percent { value }
-    }
-    fn unwrap(&self) -> Self::Inner {
-        self.value
-    }
-}
-
-/// A temperature, in degrees Celsius (°C).
-///
-/// Obtain the physical value with `f32::from` (or `.into()`).
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-pub struct DegCelsius {
-    value: i16,
-}
-/// Converts to °C (the raw register value divided by 200).
-impl From<DegCelsius> for f32 {
-    fn from(value: DegCelsius) -> f32 {
-        value.value as f32 / 200f32
-    }
-}
-
-impl ValueWrapper for DegCelsius {
-    type Inner = i16;
-    fn wrap(value: i16) -> Self {
-        DegCelsius { value }
-    }
-    fn unwrap(&self) -> Self::Inner {
-        self.value
-    }
-}
+type MicrogramsPerCubicMeter =
+    <units::mass_density::MicrogramPerCubicMeter<u16> as QuantityInfo>::Scaled<
+        { Rational::new(1, 10) },
+    >;
 
 /// A gas-index reading (VOC or NOx index points, nominal range 1–500, 100 ≈ typical).
 ///
@@ -104,110 +36,6 @@ impl ValueWrapper for Index {
     type Inner = i16;
     fn wrap(value: i16) -> Self {
         Index { value }
-    }
-    fn unwrap(&self) -> Self::Inner {
-        self.value
-    }
-}
-
-/// A gas concentration, in parts per million (ppm) — used for CO₂.
-///
-/// Obtain the physical value with `f32::from` (or `.into()`).
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-pub struct Ppm {
-    value: i16,
-}
-
-impl Ppm {
-    /// Creates a concentration of `value` ppm.
-    ///
-    /// ```
-    /// use sen6x::types::Ppm;
-    /// assert_eq!(f32::from(Ppm::new(1013)), 1013.0);
-    /// ```
-    pub fn new(value: i16) -> Self {
-        Ppm { value }
-    }
-}
-
-/// Converts to ppm (the raw register value, unscaled).
-impl From<Ppm> for f32 {
-    fn from(value: Ppm) -> f32 {
-        value.value as f32
-    }
-}
-
-impl ValueWrapper for Ppm {
-    type Inner = i16;
-    fn wrap(value: i16) -> Self {
-        Ppm { value }
-    }
-    fn unwrap(&self) -> Self::Inner {
-        self.value
-    }
-}
-
-/// An unsigned gas concentration, in parts per million (ppm).
-///
-/// Used as the reference CO₂ concentration passed to forced recalibration.
-/// Obtain the physical value with `f32::from` (or `.into()`).
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-pub struct PpmU16 {
-    value: u16,
-}
-
-impl PpmU16 {
-    /// Creates a concentration of `value` ppm.
-    ///
-    /// ```
-    /// use sen6x::types::PpmU16;
-    /// assert_eq!(f32::from(PpmU16::new(1013)), 1013.0);
-    /// ```
-    pub fn new(value: u16) -> Self {
-        PpmU16 { value }
-    }
-}
-
-/// Converts to ppm (the raw value, unscaled).
-impl From<PpmU16> for f32 {
-    fn from(value: PpmU16) -> f32 {
-        value.value as f32
-    }
-}
-
-impl ValueWrapper for PpmU16 {
-    type Inner = u16;
-    fn wrap(value: u16) -> Self {
-        PpmU16 { value }
-    }
-
-    fn unwrap(&self) -> Self::Inner {
-        self.value
-    }
-}
-
-/// A gas concentration, in parts per billion (ppb) — used for formaldehyde (HCHO).
-///
-/// Obtain the physical value with `f32::from` (or `.into()`).
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-pub struct Ppb {
-    value: i16,
-}
-
-/// Converts to ppb (the raw register value divided by 10).
-impl From<Ppb> for f32 {
-    fn from(value: Ppb) -> f32 {
-        value.value as f32 / 10f32
-    }
-}
-
-impl ValueWrapper for Ppb {
-    type Inner = i16;
-    fn wrap(value: i16) -> Self {
-        Ppb { value }
     }
     fn unwrap(&self) -> Self::Inner {
         self.value
@@ -240,83 +68,9 @@ impl ValueWrapper for ParticlesPerCm3 {
     }
 }
 
-/// An air pressure, in hectopascals (hPa).
-///
-/// Used to set the ambient pressure for the CO₂ sensor. Obtain the physical
-/// value with `f32::from` (or `.into()`).
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-pub struct Hpa {
-    value: u16,
-}
-
-impl Hpa {
-    /// Creates a pressure of `value` hectopascals.
-    ///
-    /// ```
-    /// use sen6x::types::Hpa;
-    /// assert_eq!(f32::from(Hpa::new(1013)), 1013.0);
-    /// ```
-    pub fn new(value: u16) -> Self {
-        Hpa { value }
-    }
-}
-
-/// Converts to hPa (the raw value, unscaled).
-impl From<Hpa> for f32 {
-    fn from(value: Hpa) -> f32 {
-        value.value as f32
-    }
-}
-
-impl ValueWrapper for Hpa {
-    type Inner = u16;
-    fn wrap(value: u16) -> Self {
-        Hpa { value }
-    }
-    fn unwrap(&self) -> Self::Inner {
-        self.value
-    }
-}
-
-/// A length, in metres (m).
-///
-/// Used to set the sensor altitude for the CO₂ sensor's pressure compensation.
-/// Obtain the physical value with `f32::from` (or `.into()`).
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-pub struct Meters {
-    value: u16,
-}
-
-impl Meters {
-    /// Creates a `value` meters.
-    ///
-    /// ```
-    /// use sen6x::types::Meters;
-    /// assert_eq!(f32::from(Meters::new(2000)), 2000.0);
-    /// ```
-    pub fn new(value: u16) -> Self {
-        Meters { value }
-    }
-}
-
-/// Converts to metres (the raw value, unscaled).
-impl From<Meters> for f32 {
-    fn from(value: Meters) -> f32 {
-        value.value as f32
-    }
-}
-
-impl ValueWrapper for Meters {
-    type Inner = u16;
-    fn wrap(value: u16) -> Self {
-        Meters { value }
-    }
-    fn unwrap(&self) -> Self::Inner {
-        self.value
-    }
-}
+/// Temperature in Sen6x format
+pub type DegCelsius =
+    <units::temperature::DegreesCelsius<i16> as QuantityInfo>::Scaled<{ Rational::new(1, 200) }>;
 
 /// The device's product name, as a fixed-capacity (32-byte) string.
 pub type ProductName = FixedStr<32>;
@@ -353,7 +107,8 @@ pub struct MeasuredValuesSen62 {
     /// Mass Concentration PM10.0
     pub pm_10_0: Option<MicrogramsPerCubicMeter>,
     /// Ambient Humidity
-    pub ambient_humidity: Option<Percent>,
+    pub ambient_humidity:
+        Option<<units::parts_per::Percent<i16> as QuantityInfo>::Scaled<{ Rational::new(1, 100) }>>,
     /// Ambient Temperature
     pub ambient_temperature: Option<DegCelsius>,
 }
@@ -374,11 +129,12 @@ pub struct MeasuredValuesSen63c {
     /// Mass Concentration PM10.0
     pub pm_10_0: Option<MicrogramsPerCubicMeter>,
     /// Ambient Humidity
-    pub ambient_humidity: Option<Percent>,
+    pub ambient_humidity:
+        Option<<units::parts_per::Percent<i16> as QuantityInfo>::Scaled<{ Rational::new(1, 100) }>>,
     /// Ambient Temperature
     pub ambient_temperature: Option<DegCelsius>,
     /// CO2 concentration
-    pub co2: Option<Ppm>,
+    pub co2: Option<units::parts_per::PerMillion<i16>>,
 }
 /// Measured values returned by a SEN65 (adds VOC and NOx indices over the SEN62).
 ///
@@ -396,7 +152,8 @@ pub struct MeasuredValuesSen65 {
     /// Mass Concentration PM10.0
     pub pm_10_0: Option<MicrogramsPerCubicMeter>,
     /// Ambient Humidity
-    pub ambient_humidity: Option<Percent>,
+    pub ambient_humidity:
+        Option<<units::parts_per::Percent<i16> as QuantityInfo>::Scaled<{ Rational::new(1, 100) }>>,
     /// Ambient Temperature
     pub ambient_temperature: Option<DegCelsius>,
     /// VOC Index
@@ -420,7 +177,8 @@ pub struct MeasuredValuesSen66 {
     /// Mass Concentration PM10.0
     pub pm_10_0: Option<MicrogramsPerCubicMeter>,
     /// Ambient Humidity
-    pub ambient_humidity: Option<Percent>,
+    pub ambient_humidity:
+        Option<<units::parts_per::Percent<i16> as QuantityInfo>::Scaled<{ Rational::new(1, 100) }>>,
     /// Ambient Temperature
     pub ambient_temperature: Option<DegCelsius>,
     /// VOC Index
@@ -428,7 +186,7 @@ pub struct MeasuredValuesSen66 {
     /// NOx Index
     pub nox_index: Option<Index>,
     /// CO2 concentration
-    pub co2: Option<Ppm>,
+    pub co2: Option<units::parts_per::PerMillion<i16>>,
 }
 
 /// Measured values returned by a SEN68 (adds formaldehyde over the SEN65).
@@ -447,7 +205,8 @@ pub struct MeasuredValuesSen68 {
     /// Mass Concentration PM10.0
     pub pm_10_0: Option<MicrogramsPerCubicMeter>,
     /// Ambient Humidity
-    pub ambient_humidity: Option<Percent>,
+    pub ambient_humidity:
+        Option<<units::parts_per::Percent<i16> as QuantityInfo>::Scaled<{ Rational::new(1, 100) }>>,
     /// Ambient Temperature
     pub ambient_temperature: Option<DegCelsius>,
     /// VOC Index
@@ -455,7 +214,7 @@ pub struct MeasuredValuesSen68 {
     /// NOx Index
     pub nox_index: Option<Index>,
     /// Formaldehyde concentration
-    pub hcho: Option<Ppb>,
+    pub hcho: Option<units::parts_per::PerBillion<i16>>,
 }
 
 /// Measured values returned by a SEN69C (PM, RH/T, VOC, NOx, formaldehyde and CO₂).
@@ -474,7 +233,8 @@ pub struct MeasuredValuesSen69c {
     /// Mass Concentration PM10.0
     pub pm_10_0: Option<MicrogramsPerCubicMeter>,
     /// Ambient Humidity
-    pub ambient_humidity: Option<Percent>,
+    pub ambient_humidity:
+        Option<<units::parts_per::Percent<i16> as QuantityInfo>::Scaled<{ Rational::new(1, 100) }>>,
     /// Ambient Temperature
     pub ambient_temperature: Option<DegCelsius>,
     /// VOC Index
@@ -482,9 +242,9 @@ pub struct MeasuredValuesSen69c {
     /// NOx Index
     pub nox_index: Option<Index>,
     /// Formaldehyde concentration
-    pub hcho: Option<Ppb>,
+    pub hcho: Option<units::parts_per::PerBillion<i16>>,
     /// CO2 concentration
-    pub co2: Option<Ppm>,
+    pub co2: Option<units::parts_per::PerMillion<i16>>,
 }
 
 /// Raw (uncompensated) values from a SEN62 or SEN63C.
@@ -494,7 +254,8 @@ pub struct MeasuredValuesSen69c {
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct RawValuesSen62Sen63c {
     /// Ambient Humidity
-    pub ambient_humidity: Option<Percent>,
+    pub ambient_humidity:
+        Option<<units::parts_per::Percent<i16> as QuantityInfo>::Scaled<{ Rational::new(1, 100) }>>,
     /// Ambient Temperature
     pub ambient_temperature: Option<DegCelsius>,
 }
@@ -506,7 +267,8 @@ pub struct RawValuesSen62Sen63c {
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct RawValuesSen65Sen68Sen69c {
     /// Ambient Humidity
-    pub ambient_humidity: Option<Percent>,
+    pub ambient_humidity:
+        Option<<units::parts_per::Percent<i16> as QuantityInfo>::Scaled<{ Rational::new(1, 100) }>>,
     /// Ambient Temperature
     pub ambient_temperature: Option<DegCelsius>,
     /// VOC Index
@@ -522,7 +284,8 @@ pub struct RawValuesSen65Sen68Sen69c {
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct RawValuesSen66 {
     /// Ambient Humidity
-    pub ambient_humidity: Option<Percent>,
+    pub ambient_humidity:
+        Option<<units::parts_per::Percent<i16> as QuantityInfo>::Scaled<{ Rational::new(1, 100) }>>,
     /// Ambient Temperature
     pub ambient_temperature: Option<DegCelsius>,
     /// VOC Index
@@ -530,7 +293,7 @@ pub struct RawValuesSen66 {
     /// NOx Index
     pub nox_index: Option<Index>,
     /// CO2 concentration
-    pub co2: Option<Ppm>,
+    pub co2: Option<units::parts_per::PerMillion<i16>>,
 }
 
 /// Particle number concentrations, cumulative per size bin.
@@ -639,7 +402,7 @@ pub struct Version {
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct ShtHeaterMeasurements {
     /// Relative humidity reported by the SHT sensor, or `None` if unavailable.
-    pub sht_relative_humidity: Option<Percent>,
+    pub sht_relative_humidity: Option<units::parts_per::Percent<i16>>,
     /// Temperature reported by the SHT sensor, or `None` if unavailable.
     pub sht_temperature: Option<DegCelsius>,
 }
@@ -724,10 +487,11 @@ impl Co2Correction {
     /// use sen6x::types::Co2Correction;
     /// // 0x8000 encodes a zero correction.
     /// let c = Co2Correction { result: Some(0x8000) };
-    /// assert_eq!(f32::from(c.value().unwrap()), 0.0);
+    /// assert_eq!(f32::from(c.value().unwrap().value()), 0.0);
     /// ```
-    pub fn value(&self) -> Option<Ppm> {
+    pub fn value(&self) -> Option<units::parts_per::PerMillion<i16>> {
+        const OFFSET: i32 = 0x8000i32;
         self.result
-            .map(|v| <Ppm as ValueWrapper>::wrap(((v as i32) - 0x8000i32) as i16))
+            .map(|v| units::parts_per::PerMillion::new(v as i32 - OFFSET).convert())
     }
 }

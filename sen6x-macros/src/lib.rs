@@ -106,8 +106,8 @@ pub fn sen_cmd(input: TokenStream) -> TokenStream {
                 let mut read: bool = false;
                 let mut write: bool = false;
                 let mut fetch: bool = false;
-                let mut rx: Option<Ident> = None;
-                let mut tx: Option<Ident> = None;
+                let mut rx: Option<syn::Type> = None;
+                let mut tx: Option<syn::Type> = None;
                 let mut alias: Option<Ident> = None;
 
                 let mut docs: Vec<&syn::Attribute> = Vec::new();
@@ -147,8 +147,8 @@ pub fn sen_cmd(input: TokenStream) -> TokenStream {
                         docs = Vec::new();
                         attr.parse_nested_meta(|meta| {
                             if meta.path.is_ident("rx") {
-                                let lit: Ident = meta.value()?.parse()?;
-                                rx = Some(lit);
+                                let ty: syn::Type = meta.value()?.parse()?;
+                                rx = Some(ty);
                                 return Ok(());
                             } else if meta.path.is_ident("allowed_in") {
                                 let value = meta.value()?;
@@ -168,8 +168,8 @@ pub fn sen_cmd(input: TokenStream) -> TokenStream {
                         docs = Vec::new();
                         attr.parse_nested_meta(|meta| {
                             if meta.path.is_ident("tx") {
-                                let lit: Ident = meta.value()?.parse()?;
-                                tx = Some(lit);
+                                let ty: syn::Type = meta.value()?.parse()?;
+                                tx = Some(ty);
                                 return Ok(());
                             } else if meta.path.is_ident("allowed_in") {
                                 let value = meta.value()?;
@@ -189,12 +189,12 @@ pub fn sen_cmd(input: TokenStream) -> TokenStream {
                         docs = Vec::new();
                         attr.parse_nested_meta(|meta| {
                             if meta.path.is_ident("rx") {
-                                let lit: Ident = meta.value()?.parse()?;
-                                rx = Some(lit);
+                                let ty: syn::Type = meta.value()?.parse()?;
+                                rx = Some(ty);
                                 return Ok(());
                             } else if meta.path.is_ident("tx") {
-                                let lit: Ident = meta.value()?.parse()?;
-                                tx = Some(lit);
+                                let ty: syn::Type = meta.value()?.parse()?;
+                                tx = Some(ty);
                                 return Ok(());
                             } else if meta.path.is_ident("allowed_in") {
                                 let value = meta.value()?;

@@ -233,7 +233,7 @@ pub(crate) enum CommandId {
     ///    sensor should be set to. The recalibration procedure will take about 500 ms to complete, during which
     ///    time no other functions can be executed. A return value of 0xFFFF indicates that the FRC has failed
     #[execution_time(500)]
-    #[fetch(allowed_in = [Idle], rx = Co2Correction, tx = PpmU16 )]
+    #[fetch(allowed_in = [Idle], rx = Co2Correction, tx = units::parts_per::PerMillion<u16> )]
     #[target(Sen63c)]
     #[target(Sen66)]
     #[target(Sen69c)]
@@ -270,13 +270,13 @@ pub(crate) enum CommandId {
 
     /// Gets the ambient pressure value that was set with Set Ambient Pressure. The ambient pressure
     /// can be used for pressure compensation in the CO2 sensor
-    #[read(allowed_in = [Idle, Measurement], rx = Hpa)]
+    #[read(allowed_in = [Idle, Measurement], rx = units::pressure::HectoPascals<u16>)]
     /// Sets the ambient pressure value. The ambient pressure can be used for pressure compensation in
     /// the CO2 sensor. Setting an ambient pressure overrides any pressure compensation based on a previously set
     /// sensor altitude. Use of this command is recommended for applications experiencing significant ambient
     /// pressure changes to ensure CO2 sensor accuracy. Valid input values are between 700 to 1’200 hPa. The default
     /// value is 1013 hPa.
-    #[write(allowed_in = [Idle, Measurement], tx = Hpa)]
+    #[write(allowed_in = [Idle, Measurement], tx = units::pressure::HectoPascals<u16>)]
     #[execution_time(20)]
     #[target(Sen63c)]
     #[target(Sen66)]
@@ -285,11 +285,11 @@ pub(crate) enum CommandId {
 
     /// Gets the current sensor altitude. The sensor altitude can be used for pressure compensation in
     /// the CO2 sensor.
-    #[read(allowed_in = [Idle], rx = Meters)]
+    #[read(allowed_in = [Idle], rx = units::length::Meters::<u16>)]
     /// Sets the current sensor altitude. The sensor altitude can be used for pressure compensation in the
     /// CO2 sensor. The default sensor altitude value is set to 0 meters above sea level. Valid input values are between
     /// 0 and 3000m.
-    #[write(allowed_in = [Idle], tx = Meters)]
+    #[write(allowed_in = [Idle], tx = units::length::Meters::<u16>)]
     #[execution_time(20)]
     #[target(Sen63c)]
     #[target(Sen66)]
