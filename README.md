@@ -7,6 +7,7 @@ This driver is compatible with `embedded-hal v1.0`.
 
 [![Crates.io](https://img.shields.io/crates/v/sen6x-driver.svg)](https://crates.io/crates/sen6x-driver)
 [![Docs.rs](https://docs.rs/sen6x-driver/badge.svg)](https://docs.rs/sen6x-driver)
+[![codecov](https://codecov.io/gh/finomen/sen6x-rs/graph/badge.svg?token=G6HXEWSEEP)](https://codecov.io/gh/finomen/sen6x-rs)
 
 ## Reasons for yet another driver
 
