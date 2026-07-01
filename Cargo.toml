@@ -2,4 +2,3 @@
 resolver = "3"
 members = ["sen6x-driver", "sen6x-macros", "examples/esp32-embassy"]
 default-members = ["sen6x-driver"]
-

@@ -18,7 +18,6 @@
 //! that only send (with no response) return [`Error::NotAllowed`] or [`Error::I2c`].
 //! Each command method also documents its own `# Errors` section.
 #![cfg_attr(not(test), no_std)]
-
 pub mod commands;
 
 mod errors;

@@ -1,5 +1,7 @@
 use crate::Error;
 use sensirion_i2c::crc8::calculate;
+use units::quantity::Quantity;
+use units::unit::{Unit, UnitTags};
 
 pub(crate) trait FromBytes<const N: usize, R> {
     fn from_bytes_with_crc<E>(bytes: &[u8; N]) -> Result<R, Error<E>>;
@@ -129,6 +131,20 @@ pub(crate) trait ValueWrapper {
     type Inner;
     fn wrap(value: Self::Inner) -> Self;
     fn unwrap(&self) -> Self::Inner;
+}
+
+impl<T, US> ValueWrapper for Quantity<T, US>
+where
+    T: Copy,
+    US: Unit + UnitTags,
+{
+    type Inner = T;
+    fn wrap(value: Self::Inner) -> Self {
+        Self::new(value)
+    }
+    fn unwrap(&self) -> Self::Inner {
+        self.value()
+    }
 }
 
 impl<const N: usize, W> FromBytes<N, W> for W

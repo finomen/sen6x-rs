@@ -2,7 +2,7 @@
 use crate::commands::CommandId;
 #[cfg(any(feature = "embedded-hal", feature = "embedded-hal-async"))]
 use crate::io::{FromBytes, ToBytes};
-#[cfg(any(feature = "embedded-hal", feature = "embedded-hal-async"))]
+#[cfg(feature = "embedded-hal")]
 use crate::types::Milliseconds;
 
 #[derive(Debug, PartialEq)]
