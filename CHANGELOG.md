@@ -1,3 +1,15 @@
+## [0.1.0](https://github.com/finomen/sen6x-rs/compare/v0.0.4...v0.1.0) (2026-07-01)
+
+
+### Features
+
+* use units-nostd-rs ([27ffbf4](https://github.com/finomen/sen6x-rs/commit/27ffbf429263aba6fd534473cc24585a8e94a923))
+
+
+### Documentation
+
+* add codecov badge ([e423063](https://github.com/finomen/sen6x-rs/commit/e4230637f4853c5f832585a34a13c6633d01be4a))
+
 ## [0.0.4](https://github.com/finomen/sen6x-rs/compare/v0.0.3...v0.0.4) (2026-06-22)
 
 
